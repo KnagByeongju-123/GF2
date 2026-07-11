@@ -274,7 +274,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 울쑤회  <span class="rev">Rev. 1.3</span></h1>
+    <h1><span class="flag">⛳</span> 울쑤회  <span class="rev">Rev. 1.4</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -1241,7 +1241,7 @@ function renderFeeDues(){
   el.dataset.year = sel;
   // 해당 연도에 '연회비' 항목으로 납부한 회원명
   const paid = new Set(DATA.fees.filter(f =>
-    f['구분']==='수입' && inFiscal(f['날짜'], sel) &&
+    f['구분']==='수입' && dueFiscalOf(f['날짜']) === String(sel) &&
     String(f['내용']||'').indexOf('연회비') >= 0 && f['회원명']
   ).map(f => String(f['회원명']).trim()));
   const paidList = [], dueList = [];
@@ -1258,7 +1258,7 @@ function renderFeeDues(){
     '<div>❌ <b style="color:var(--flag)">미납 '+dueList.length+'명</b>'+
     (dueList.length? ' · '+dueList.map(m=>'<span style="color:var(--flag);font-weight:700">'+esc(m['이름'])+(m['상태']==='휴회'?'(휴회)':'')+'</span>').join(', ') : ' — 전원 납부 완료 🎉')+'</div>'+
     '</div>'+
-    '<p style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">기준: 선택 회기(7월~익년 6월)의 수입 중 내용에 "연회비" 포함 + 회원명 기재 (회칙 제15조 회계연도)</p>'+
+    '<p style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">기준: 내용에 "연회비" 포함 + 회원명 기재 · 회기 시작 전달(선납)부터 해당 회기 납부로 인정</p>'+
     '</div>'
     + monthlyAttendCard(sel);
 }
@@ -2007,6 +2007,14 @@ function fyLabel(fy){
   return fy+'회기 ('+String(fy).slice(2)+'.'+sm+'~'+String(Number(fy)+1).slice(2)+'.'+em+')';
 }
 function inFiscal(dateStr, fy){ return fiscalOf(dateStr) === String(fy); }
+// 연회비 귀속 회기: 회기 시작 전달부터 새 회기 선납으로 인정 (예: 7월 회기 → 6월 납부 인정)
+function dueFiscalOf(dateStr){
+  const m = String(dateStr||'').match(/^(\d{4})-(\d{2})/);
+  if(!m) return '';
+  const y = Number(m[1]), mo = Number(m[2]);
+  if(FY_START <= 1) return mo === 12 ? String(y+1) : String(y); // 1월 회기: 12월 선납은 차기
+  return mo >= FY_START - 1 ? String(y) : String(y-1);
+}
 
 function openReport(){
   const years = [...new Set(DATA.fees.map(feeYear).filter(y=>/^\d{4}$/.test(y)))].sort().reverse();
