@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>을쑤회 골프클럽</title>
+<title>얼쑤회 골프클럽</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
@@ -274,7 +274,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 을쑤회  <span class="rev">Rev. 1.7</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회  <span class="rev">Rev. 1.8</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -698,7 +698,7 @@ td.num,th.num{text-align:right}
 <div id="gate" style="display:none">
   <div class="gate-box">
     <div style="font-size:40px;margin-bottom:6px">⛳</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">을쑤회 </h2>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">얼쑤회 </h2>
     <p style="font-size:13.5px;color:var(--ink-soft);margin:10px 0 20px">회원은 이름과 PIN으로 로그인하세요.<br>손님은 대시보드·게시판·명예의 전당·회칙을 볼 수 있습니다.</p>
     <button class="btn btn-primary" style="width:100%;padding:12px" onclick="openLogin()">회원 로그인</button>
     <button class="btn btn-ghost" style="width:100%;padding:12px;margin-top:8px" onclick="enterGuest()">손님으로 둘러보기</button>
@@ -1864,7 +1864,7 @@ function testNtfy(){
   const topic = document.getElementById('setNtfyTopic').value.trim();
   if(!topic){ alert('토픽명을 먼저 입력하세요.'); return; }
   fetch('https://ntfy.sh', { method:'POST',
-    body: JSON.stringify({ topic, title:'을쑤회 알림 테스트', message:'이 알림이 보이면 설정 완료입니다 ⛳', tags:['golf'] }) })
+    body: JSON.stringify({ topic, title:'얼쑤회 알림 테스트', message:'이 알림이 보이면 설정 완료입니다 ⛳', tags:['golf'] }) })
     .then(()=>toast('테스트 알림을 보냈습니다. ntfy 앱을 확인하세요'))
     .catch(err=>alert('발송 오류: '+err.message));
 }
@@ -1972,7 +1972,7 @@ function boxClick(toG){
 
 function copyTeams(){
   if(!TEAMS.length) return;
-  const text = '[을쑤회 조편성]\n' + TEAMS.map((t,i)=>(i+1)+'조: '+t.join(', ')).join('\n');
+  const text = '[얼쑤회 조편성]\n' + TEAMS.map((t,i)=>(i+1)+'조: '+t.join(', ')).join('\n');
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(()=>toast('조편성 결과를 복사했습니다'), ()=>fallbackCopy(text));
   } else fallbackCopy(text);
@@ -2081,7 +2081,7 @@ function renderReport(){
 
 function copyReport(){
   const d = reportData();
-  let text = '[을쑤회 '+fyLabel(d.year)+' 회비 결산]\n'+
+  let text = '[얼쑤회 '+fyLabel(d.year)+' 회비 결산]\n'+
     '기초잔액 '+won(d.before)+'원\n총수입 '+won(d.inSum)+'원 / 총지출 '+won(d.outSum)+'원\n'+
     '기말잔액 '+won(d.before+d.inSum-d.outSum)+'원\n';
   const fo = m => (Number(m) - FY_START + 12) % 12;
@@ -2101,7 +2101,7 @@ function shareKakao(id){
   if(!p) return;
   const title = (p['종류']==='공지'?'📌 [공지] ':'')+ p['제목'];
   const pageUrl = location.href.split('#')[0];
-  const text = '[을쑤회] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
+  const text = '[얼쑤회] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
 
   const done = () => {
     if(confirm('공지 내용을 복사했습니다.\n카카오톡을 열어 붙여넣기 하시겠어요?')){
