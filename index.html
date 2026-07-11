@@ -274,7 +274,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 을쑤회  <span class="rev">Rev. 1.6</span></h1>
+    <h1><span class="flag">⛳</span> 을쑤회  <span class="rev">Rev. 1.7</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -591,21 +591,19 @@ td.num,th.num{text-align:right}
     <input type="hidden" id="feId">
     <div class="row2">
       <div class="field"><label>날짜 *</label><input id="feDate" type="date"></div>
-      <div class="field"><label>티오프</label>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <button type="button" id="feAM" class="ampm on" onclick="setAmPm('AM')">오전</button>
-          <button type="button" id="fePM" class="ampm" onclick="setAmPm('PM')">오후</button>
-          <select id="feTeeH" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
-          <span style="font-size:13px">시</span>
-          <select id="feTeeM" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
-          <span style="font-size:13px">분</span>
-        </div></div>
-    </div>
-    <div class="row2">
       <div class="field"><label>모임의 종류</label>
         <select id="feType"><option>월례회</option><option>회장배</option><option>써클배</option><option>번개</option><option>원정</option><option>기타</option></select></div>
-      <div class="field"><label>상품내역</label><input id="fePrize" placeholder="예: 우승 트로피, 상품권"></div>
     </div>
+    <div class="field"><label>티오프</label>
+      <div style="display:flex;gap:8px;align-items:center;white-space:nowrap">
+        <button type="button" id="feAM" class="ampm on" onclick="setAmPm('AM')">오전</button>
+        <button type="button" id="fePM" class="ampm" onclick="setAmPm('PM')">오후</button>
+        <select id="feTeeH" style="flex:0 0 auto;width:74px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
+        <span style="font-size:13px">시</span>
+        <select id="feTeeM" style="flex:0 0 auto;width:74px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
+        <span style="font-size:13px">분</span>
+      </div></div>
+    <div class="field"><label>상품내역</label><input id="fePrize" placeholder="예: 우승 트로피, 상품권"></div>
     <div class="field"><label>골프장 *</label><input id="feCourse"></div>
     <div class="field"><label>참가자 (신청 버튼으로 자동 추가됨 · 직접 수정 가능)</label><textarea id="fePlayers" rows="2"></textarea></div>
     <div class="field"><label>메모</label><input id="feMemo"></div>
