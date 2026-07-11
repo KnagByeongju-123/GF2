@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>울쑤회 골프클럽</title>
+<title>을쑤회 골프클럽</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
-  --green-950:#0B1F15; --green-800:#1E5238; --green-600:#349960;
-  --accent:#3DDC84; --accent-deep:#2BAF67;
-  --paper:#0F1512; --card:#18211C; --card-soft:#1E2923;
-  --line:#2A3830; --line-soft:#222E28;
-  --ink:#E9EDE8; --ink-soft:#8FA096;
-  --flag:#E2664D; --gold:#D4AF5A; --gold-deep:#C29A3F;
+  --green-950:#07271A; --green-800:#14603F; --green-600:#2AA96B;
+  --accent:#41E896; --accent-deep:#27C275;
+  --paper:#0A241A; --card:#103425; --card-soft:#15402E;
+  --line:#1F5038; --line-soft:#1A452F;
+  --ink:#EAF4EC; --ink-soft:#93B8A2;
+  --flag:#F0705A; --gold:#E3C06A; --gold-deep:#C9A24A;
   --radius:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);font-size:15px;
   background:
-    radial-gradient(1100px 500px at 15% -5%, rgba(61,220,132,.06), transparent 60%),
-    radial-gradient(900px 600px at 100% 0%, rgba(212,175,90,.05), transparent 55%),
-    linear-gradient(180deg, #131A16 0%, var(--paper) 45%, #0B100D 100%);
+    radial-gradient(1100px 500px at 15% -5%, rgba(65,232,150,.09), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(227,192,106,.06), transparent 55%),
+    linear-gradient(180deg, #0E3A27 0%, var(--paper) 45%, #061A12 100%);
   background-attachment:fixed;min-height:100vh}
 
 /* ---------- 상단 ---------- */
@@ -121,7 +121,7 @@ td.num,th.num{text-align:right}
 .field{margin-bottom:13px}
 .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;font:inherit;font-size:14.5px;padding:9px 11px;
-  border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)}
+  border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)}
 .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent-deep);border-color:transparent}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -129,7 +129,7 @@ td.num,th.num{text-align:right}
 /* 스코어 입력 리스트 */
 .score-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-soft)}
 .score-row span{flex:1;font-weight:600}
-.score-row input{width:90px;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;text-align:right;background:#121A15;color:var(--ink)}
+.score-row input{width:90px;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;text-align:right;background:#0D2C1F;color:var(--ink)}
 
 /* 로딩 / 토스트 */
 #loading{position:fixed;inset:0;background:rgba(15,21,18,.88);display:flex;align-items:center;
@@ -168,7 +168,7 @@ td.num,th.num{text-align:right}
 .post-body{margin:10px 0 4px;font-size:14.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
 .post-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:12px}
 .post-photos a{display:block;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
-.post-photos img{width:100%;height:110px;object-fit:cover;display:block;background:#101713}
+.post-photos img{width:100%;height:110px;object-fit:cover;display:block;background:#0B2A1D}
 .post-actions{margin-top:12px;text-align:right}
 
 /* 사진 갤러리 */
@@ -176,7 +176,7 @@ td.num,th.num{text-align:right}
 .photo-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card-soft);
   box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .photo-card a{display:block}
-.photo-card img{width:100%;height:130px;object-fit:cover;display:block;background:#101713}
+.photo-card img{width:100%;height:130px;object-fit:cover;display:block;background:#0B2A1D}
 .photo-meta{padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:6px}
 .photo-meta .info{font-size:12px;color:var(--ink-soft);line-height:1.4;min-width:0}
 .photo-meta .info b{display:block;color:var(--ink);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -189,11 +189,11 @@ td.num,th.num{text-align:right}
 .tm-members input{accent-color:#2BAF67}
 .team-board{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .team-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:90px}
-.team-box.drop-hover{border-color:#3DDC84;background:#1B2A21}
+.team-box.drop-hover{border-color:#3DDC84;background:#175038}
 .team-box h5{font-size:14px;font-weight:800;margin-bottom:9px;color:#5FE29B}
 .team-box h5 small{color:var(--ink-soft);font-weight:600}
 .tm-chip{display:inline-block;font-size:13px;font-weight:700;padding:6px 12px;margin:0 5px 6px 0;
-  background:#243229;border:1px solid var(--line);border-radius:20px;cursor:grab;user-select:none}
+  background:#174631;border:1px solid var(--line);border-radius:20px;cursor:grab;user-select:none}
 .tm-chip.picked{background:linear-gradient(180deg,#3DDC84,#2BAF67);color:#07130C;border-color:transparent}
 /* 회칙 */
 .rules-view{white-space:pre-wrap;font-size:17px;line-height:1.9;word-break:break-word}
@@ -207,7 +207,7 @@ td.num,th.num{text-align:right}
 
 /* 오전/오후 토글 */
 .ampm{font:inherit;font-size:13.5px;font-weight:700;padding:8px 14px;border-radius:8px;cursor:pointer;
-  background:#121A15;color:var(--ink-soft);border:1px solid var(--line)}
+  background:#0D2C1F;color:var(--ink-soft);border:1px solid var(--line)}
 .ampm.on{background:linear-gradient(180deg,#3DDC84,#2BAF67);color:#07130C;border-color:transparent;
   box-shadow:0 2px 6px rgba(61,220,132,.3)}
 
@@ -274,7 +274,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 울쑤회  <span class="rev">Rev. 1.4</span></h1>
+    <h1><span class="flag">⛳</span> 을쑤회  <span class="rev">Rev. 1.6</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -346,7 +346,7 @@ td.num,th.num{text-align:right}
     <div class="page-head"><h2>🏆 평균타수 · 시즌 랭킹</h2>
       <span style="display:flex;align-items:center;gap:8px">
         <label style="font-size:13.5px;font-weight:700;color:var(--ink-soft)">평균 기준</label>
-        <select id="rankN" onchange="setAvgN(this.value)" style="font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)">
+        <select id="rankN" onchange="setAvgN(this.value)" style="font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)">
           <option value="0">전체</option>
           <option value="3">최근 3회</option>
           <option value="5">최근 5회</option>
@@ -402,13 +402,13 @@ td.num,th.num{text-align:right}
       <div style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
         <label style="font-size:13.5px;font-weight:700">게스트</label>
         <input id="tmGuestN" type="number" min="0" max="20" value="0" onchange="renderGuestInputs()"
-          style="width:64px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink);text-align:center">
+          style="width:64px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink);text-align:center">
         <span style="font-size:12.5px;color:var(--ink-soft)">명 — 수를 정하면 이름 입력란이 생깁니다</span>
       </div>
       <div id="tmGuests" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px"></div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
         <label style="font-size:13.5px;font-weight:700">조 수</label>
-        <input id="tmGroups" type="number" min="1" max="20" value="4" style="width:70px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink);text-align:center">
+        <input id="tmGroups" type="number" min="1" max="20" value="4" style="width:70px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink);text-align:center">
         <button class="btn btn-primary" onclick="makeTeams()">🎲 랜덤 배치</button>
         <button class="btn btn-ghost" id="tmCopyBtn" onclick="copyTeams()" style="display:none">결과 복사</button>
       </div>
@@ -452,7 +452,7 @@ td.num,th.num{text-align:right}
         연회비·월례회 정산·연간 결산이 이 기준으로 집계됩니다.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <label style="font-size:13.5px;font-weight:700">시작 월</label>
-        <select id="setFyStart" style="font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)"></select>
+        <select id="setFyStart" style="font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
         <button class="btn btn-primary" onclick="saveFyStart()">저장</button>
         <span id="fyPreview" style="font-size:12.5px;color:#5FE29B"></span>
       </div>
@@ -525,7 +525,7 @@ td.num,th.num{text-align:right}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap">
       <h3 style="margin:0">📊 회비 연간 결산</h3>
       <span>
-        <select id="rpYear" onchange="renderReport()" style="font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)"></select>
+        <select id="rpYear" onchange="renderReport()" style="font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
         <button class="btn btn-sm btn-ghost" style="margin-left:4px" onclick="copyReport()">결산 복사</button>
       </span>
     </div>
@@ -595,9 +595,9 @@ td.num,th.num{text-align:right}
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <button type="button" id="feAM" class="ampm on" onclick="setAmPm('AM')">오전</button>
           <button type="button" id="fePM" class="ampm" onclick="setAmPm('PM')">오후</button>
-          <select id="feTeeH" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)"></select>
+          <select id="feTeeH" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
           <span style="font-size:13px">시</span>
-          <select id="feTeeM" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)"></select>
+          <select id="feTeeM" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
           <span style="font-size:13px">분</span>
         </div></div>
     </div>
@@ -700,7 +700,7 @@ td.num,th.num{text-align:right}
 <div id="gate" style="display:none">
   <div class="gate-box">
     <div style="font-size:40px;margin-bottom:6px">⛳</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">울쑤회 </h2>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">을쑤회 </h2>
     <p style="font-size:13.5px;color:var(--ink-soft);margin:10px 0 20px">회원은 이름과 PIN으로 로그인하세요.<br>손님은 대시보드·게시판·명예의 전당·회칙을 볼 수 있습니다.</p>
     <button class="btn btn-primary" style="width:100%;padding:12px" onclick="openLogin()">회원 로그인</button>
     <button class="btn btn-ghost" style="width:100%;padding:12px;margin-top:8px" onclick="enterGuest()">손님으로 둘러보기</button>
@@ -1250,7 +1250,7 @@ function renderFeeDues(){
     '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+
     '<b style="font-size:14.5px">💳 연회비 납부 현황</b>'+
     '<select onchange="document.getElementById(\'feeDues\').dataset.year=this.value;renderFeeDues()" '+
-    'style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#121A15;color:var(--ink)">'+
+    'style="font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)">'+
     years.map(y=>'<option value="'+y+'"'+(y===sel?' selected':'')+'>'+fyLabel(y)+'</option>').join('')+'</select></div>'+
     '<div style="font-size:13.5px;line-height:2">'+
     '<div>✅ <b style="color:#5FE29B">납부 '+paidList.length+'명</b>'+
@@ -1866,7 +1866,7 @@ function testNtfy(){
   const topic = document.getElementById('setNtfyTopic').value.trim();
   if(!topic){ alert('토픽명을 먼저 입력하세요.'); return; }
   fetch('https://ntfy.sh', { method:'POST',
-    body: JSON.stringify({ topic, title:'울쑤회 알림 테스트', message:'이 알림이 보이면 설정 완료입니다 ⛳', tags:['golf'] }) })
+    body: JSON.stringify({ topic, title:'을쑤회 알림 테스트', message:'이 알림이 보이면 설정 완료입니다 ⛳', tags:['golf'] }) })
     .then(()=>toast('테스트 알림을 보냈습니다. ntfy 앱을 확인하세요'))
     .catch(err=>alert('발송 오류: '+err.message));
 }
@@ -1906,7 +1906,7 @@ function renderGuestInputs(){
   let html = '';
   for(let i=0;i<n;i++){
     html += '<input class="tm-guest" placeholder="게스트'+(i+1)+' 이름" value="'+esc(prev[i]||'')+'"'+
-      ' style="font:inherit;padding:8px;border:1px solid var(--gold);border-radius:8px;background:#121A15;color:var(--ink)">';
+      ' style="font:inherit;padding:8px;border:1px solid var(--gold);border-radius:8px;background:#0D2C1F;color:var(--ink)">';
   }
   box.innerHTML = html;
 }
@@ -1974,7 +1974,7 @@ function boxClick(toG){
 
 function copyTeams(){
   if(!TEAMS.length) return;
-  const text = '[울쑤회 조편성]\n' + TEAMS.map((t,i)=>(i+1)+'조: '+t.join(', ')).join('\n');
+  const text = '[을쑤회 조편성]\n' + TEAMS.map((t,i)=>(i+1)+'조: '+t.join(', ')).join('\n');
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(()=>toast('조편성 결과를 복사했습니다'), ()=>fallbackCopy(text));
   } else fallbackCopy(text);
@@ -1987,7 +1987,7 @@ function viewReceipts(feeId){
   const rcs = String(f['영수증']||'').split(',').filter(Boolean);
   document.getElementById('mReceiptTitle').textContent = '영수증 · '+f['내용']+' ('+rcs.length+'장)';
   document.getElementById('receiptImgs').innerHTML =
-    rcs.map(id => '<img data-img="'+id+'" alt="영수증" style="width:100%;border-radius:10px;border:1px solid var(--line);background:#101713;min-height:120px">').join('');
+    rcs.map(id => '<img data-img="'+id+'" alt="영수증" style="width:100%;border-radius:10px;border:1px solid var(--line);background:#0B2A1D;min-height:120px">').join('');
   openModal('mReceipt');
   loadProxyImages('#receiptImgs');
 }
@@ -2083,7 +2083,7 @@ function renderReport(){
 
 function copyReport(){
   const d = reportData();
-  let text = '[울쑤회 '+fyLabel(d.year)+' 회비 결산]\n'+
+  let text = '[을쑤회 '+fyLabel(d.year)+' 회비 결산]\n'+
     '기초잔액 '+won(d.before)+'원\n총수입 '+won(d.inSum)+'원 / 총지출 '+won(d.outSum)+'원\n'+
     '기말잔액 '+won(d.before+d.inSum-d.outSum)+'원\n';
   const fo = m => (Number(m) - FY_START + 12) % 12;
@@ -2103,7 +2103,7 @@ function shareKakao(id){
   if(!p) return;
   const title = (p['종류']==='공지'?'📌 [공지] ':'')+ p['제목'];
   const pageUrl = location.href.split('#')[0];
-  const text = '[울쑤회] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
+  const text = '[을쑤회] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
 
   const done = () => {
     if(confirm('공지 내용을 복사했습니다.\n카카오톡을 열어 붙여넣기 하시겠어요?')){
