@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>얼쑤회 골프클럽</title>
+<title>얼쑤회 · 창원CC</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
@@ -24,7 +24,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);font-siz
   background-attachment:fixed;min-height:100vh}
 
 /* ---------- 상단 ---------- */
-header{position:relative;overflow:hidden;
+header{position:sticky;top:0;z-index:90;overflow:hidden;
   background:linear-gradient(120deg, #03100A, #0C2C1C, #123D28, #0A2418, #03100A);
   background-size:300% 300%;animation:hdrFlow 5s ease infinite;
   color:#fff;padding:20px 24px 16px;border-bottom:2px solid var(--accent-deep);
@@ -113,6 +113,8 @@ td.num,th.num{text-align:right}
 .badge-out{background:#3E211B;color:#F08A74}
 
 /* 모달 */
+.tm-info{font-size:12px;color:var(--accent);margin:2px 0 8px;cursor:pointer;padding:3px 6px;border-radius:6px;background:rgba(65,232,150,.10)}
+.tm-info-empty{color:var(--ink-soft);background:transparent;border:1px dashed var(--line)}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:95;
   align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
 .modal-bg.show{display:flex}
@@ -274,10 +276,10 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회  <span class="rev">Rev. 1.8</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.0</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
-  <nav>
+  <nav style="display:flex;flex-wrap:wrap;gap:2px">
     <button class="on" data-tab="dash" onclick="go('dash',this)">대시보드</button>
     <button data-tab="mypage" onclick="go('mypage',this)">마이페이지</button>
     <button data-tab="members" onclick="go('members',this)">회원</button>
@@ -417,13 +419,27 @@ td.num,th.num{text-align:right}
     <div id="teamBoard" class="team-board"></div>
   </section>
 
+  <div class="modal-bg" id="mTeamMeta"><div class="modal">
+    <h3 id="tmMetaTitle">티오프·코스</h3>
+    <div class="field"><label>티오프</label>
+      <div style="display:flex;gap:8px;align-items:center;white-space:nowrap">
+        <select id="tmMetaAP" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"><option value="AM">오전</option><option value="PM">오후</option></select>
+        <select id="tmMetaH" style="width:70px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select><span style="font-size:13px">시</span>
+        <select id="tmMetaM" style="width:70px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select><span style="font-size:13px">분</span>
+      </div></div>
+    <div class="field"><label>코스</label>
+      <select id="tmMetaCourse" style="width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('mTeamMeta')">취소</button>
+      <button class="btn btn-primary" onclick="saveTeamMeta()">저장</button></div>
+  </div></div>
+
   <!-- 회칙 -->
   <section id="tab-rules" hidden>
     <div class="page-head"><h2>회칙</h2>
       <button class="btn btn-primary admin-only" onclick="openRules()">회칙 수정</button></div>
     <div class="card" style="padding:18px"><div id="rulesView" class="rules-view"></div></div>
   </section>
-  <!-- 설정 (회장·총무) -->
+  <!-- 설정 (운영진) -->
   <section id="tab-settings" hidden>
     <div class="page-head"><h2>⚙️ 설정</h2></div>
     <div class="card" style="padding:18px;margin-bottom:14px">
@@ -472,7 +488,7 @@ td.num,th.num{text-align:right}
     <div class="field"><label>회사명</label><input id="fmCompany"></div>
     <div class="row2">
       <div class="field"><label>직책</label>
-        <select id="fmRole"><option>일반</option><option>회장</option><option>총무</option></select></div>
+        <select id="fmRole"><option>일반</option><option>회장</option><option>부회장</option><option>총무</option><option>윤리위원장</option><option>PM</option></select></div>
       <div class="field"><label>PIN (로그인 비밀번호)</label>
         <input id="fmPin" type="password" inputmode="numeric" placeholder="수정 시 빈칸=유지"></div>
     </div>
@@ -534,7 +550,7 @@ td.num,th.num{text-align:right}
   </div>
 </div>
 
-<!-- 회원 관리 모달 (회장·총무) -->
+<!-- 회원 관리 모달 (운영진) -->
 <div class="modal-bg" id="mMemCtl">
   <div class="modal" style="max-width:420px">
     <h3 id="mcName">회원 관리</h3>
@@ -575,7 +591,7 @@ td.num,th.num{text-align:right}
 <!-- 회칙 모달 -->
 <div class="modal-bg" id="mRules">
   <div class="modal" style="max-width:640px">
-    <h3>회칙 수정 (회장·총무)</h3>
+    <h3>회칙 수정 (운영진)</h3>
     <div class="field"><textarea id="frText" rows="18" style="font-size:13.5px;line-height:1.6"></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('mRules')">취소</button>
@@ -744,10 +760,10 @@ function enterGuest(){
   toast('손님으로 둘러보는 중입니다');
 }
 
+const MASTER_ROLES = ['회장','부회장','총무','윤리위원장','PM']; // 마스터 권한 직책
 function isAdmin(){
-  if(AUTH && (AUTH['직책']==='회장' || AUTH['직책']==='총무')) return true;
-  // 관리자가 아직 아무도 없으면 초기 설정을 위해 전체 허용
-  return DATA.members.length === 0 || !DATA.members.some(m => m['직책']==='회장' || m['직책']==='총무');
+  if(AUTH && MASTER_ROLES.includes(AUTH['직책'])) return true;
+  return DATA.members.length === 0 || !DATA.members.some(m => MASTER_ROLES.includes(m['직책']));
 }
 
 function updateAuthUI(){
@@ -947,10 +963,10 @@ function renderRank(){
 function setAvgN(v){
   AVG_N = Number(v)||0;
   renderRank(); renderScores(); renderMypage();
-  if(isAdmin()){ // 회장·총무가 바꾸면 전체 공유되도록 서버 저장
+  if(isAdmin()){ // 운영진가 바꾸면 전체 공유되도록 서버 저장
     call('saveSetting', {key:'avgN', value:AVG_N}, ()=>toast('평균 기준을 저장했습니다 (전체 공유)'));
   } else {
-    toast('이 기기에서만 보기 변경됩니다 (전체 기준은 회장·총무가 설정)');
+    toast('이 기기에서만 보기 변경됩니다 (전체 기준은 운영진가 설정)');
   }
 }
 
@@ -1000,7 +1016,7 @@ function restoreMember(id, name){
   call('restoreMember', {ID:id}, d => { splitMembers(d); renderAll(); toast(name+'님을 복원했습니다. PIN을 새로 설정해 주세요.'); });
 }
 
-/* ---------- 회원 관리 모달 (회장·총무) ---------- */
+/* ---------- 회원 관리 모달 (운영진) ---------- */
 function findMemberById(id){
   return DATA.members.find(x=>x.ID==id) || DATA.membersRetired.find(x=>x.ID==id);
 }
@@ -1117,6 +1133,10 @@ function applyEvent(id){
 }
 
 const incBadge = s => s['집계']==='Y' ? '<span class="badge badge-in">이력</span>' : '<span class="badge" style="background:#3A2F17;color:#E4C378">기록중</span>';
+function goodBadge(v){ v = Number(v); if(!v) return '';
+  if(v <= 72) return ' <span class="badge" style="background:#4A2FBF33;color:#C9B8FF" title="이븐파 이하">🏆 이븐</span>';
+  if(v <= 81) return ' <span class="badge" style="background:#3A2F17;color:#FFD76B" title="싱글(81타 이하)">🔥 싱글</span>';
+  return ''; }
 function scoreRowActions(s){
   if(!isAdmin()) return '';
   return '<td style="text-align:right;white-space:nowrap">'+
@@ -1132,13 +1152,13 @@ function renderScores(){
   const rows = DATA.scores.filter(s => s['집계'] !== 'Y') // 이력으로 넘어간 기록은 숨김
     .sort((a,b)=> String(a['날짜'])===String(b['날짜']) ? Number(a['타수'])-Number(b['타수']) : (String(a['날짜'])<String(b['날짜'])?1:-1));
   title.textContent = rows.length
-    ? '당회 기록 '+rows.length+'건 — 시합 종료 후 [업데이트]를 누르면 평균타수에 반영됩니다 (회장·총무)'
+    ? '당회 기록 '+rows.length+'건 — 시합 종료 후 [업데이트]를 누르면 평균타수에 반영됩니다 (운영진)'
     : '당회 기록 — 진행 중인 시합 기록이 없습니다';
   if(!rows.length){ el.innerHTML = '<div class="empty">스코어 입력으로 이번 시합 기록을 시작하세요.<br>지난 이력은 평균타수 탭에서 이름을 클릭해 확인합니다.</div>'; return; }
   el.innerHTML = '<table><tr><th style="white-space:nowrap">날짜</th><th>이름</th><th style="white-space:nowrap">골프장</th><th class="num">타수</th>'+(isAdmin()?'<th></th>':'')+'</tr>' +
     rows.map(s =>
       '<tr><td style="white-space:nowrap">'+shortDate(s['날짜'])+'</td><td style="font-weight:700;white-space:nowrap">'+esc(s['이름'])+'</td><td style="white-space:nowrap">'+esc(s['골프장'])+'</td>'+
-      '<td class="num" style="font-weight:700">'+esc(s['타수'])+'</td>'+ scoreRowActions(s) +'</tr>'
+      '<td class="num" style="font-weight:700;white-space:nowrap">'+esc(s['타수'])+goodBadge(s['타수'])+'</td>'+ scoreRowActions(s) +'</tr>'
     ).join('') + '</table>';
   renderTeamTotals(rows);
 }
@@ -1187,7 +1207,7 @@ function openHistory(name){
     '<table><tr><th style="white-space:nowrap">날짜</th><th style="white-space:nowrap">골프장</th><th class="num">타수</th><th>포함</th>'+(isAdmin()?'<th></th>':'')+'</tr>' +
     rows.map(s =>
       '<tr><td style="white-space:nowrap">'+shortDate(s['날짜'])+'</td><td style="white-space:nowrap">'+esc(s['골프장'])+'</td>'+
-      '<td class="num" style="font-weight:700">'+esc(s['타수'])+'</td>'+
+      '<td class="num" style="font-weight:700;white-space:nowrap">'+esc(s['타수'])+goodBadge(s['타수'])+'</td>'+
       '<td>'+incBadge(s)+'</td>'+ scoreRowActions(s) +'</tr>'
     ).join('') + '</table>';
   openModal('mHistory');
@@ -1422,11 +1442,23 @@ function openScore(){
   const sel = document.getElementById('fsEvent');
   sel.innerHTML = [...DATA.events].sort((a,b)=>a['날짜']<b['날짜']?1:-1)
     .map(e => '<option value="'+e.ID+'">'+e['날짜']+' · '+esc(e['골프장'])+'</option>').join('');
-  document.getElementById('fsRows').innerHTML = DATA.members.filter(m=>!m['상태']).map(m =>
-    '<div class="score-row"><span>'+esc(m['이름'])+'</span>'+
-    '<input type="number" min="50" max="150" placeholder="타수" data-id="'+m.ID+'" data-name="'+esc(m['이름'])+'"></div>'
-  ).join('');
-  openModal('mScore');
+  sel.onchange = renderFsRows; renderFsRows(); openModal('mScore');
+}
+function renderFsRows(){
+  const ev = DATA.events.find(x=>x.ID==document.getElementById('fsEvent').value);
+  const players = String(ev&&ev['참가자']||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const hasList = players.length > 0;
+  const list = DATA.members.filter(m=>!m['상태']);
+  const note = hasList
+    ? '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">이 모임 참가자 '+players.length+'명. 불참 회원은 입력란 대신 <b>불참</b>으로 표시됩니다.</p>'
+    : '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">참가자 명단이 없는 모임이라 전체 회원에 입력란을 표시합니다.</p>';
+  document.getElementById('fsRows').innerHTML = note + list.map(m => {
+    const absent = hasList && !players.includes(m['이름']);
+    return '<div class="score-row"><span>'+esc(m['이름'])+'</span>'+
+      (absent
+        ? '<span class="badge" style="background:#3A2320;color:#F0A090">불참</span>'
+        : '<input type="number" min="50" max="150" placeholder="타수" data-id="'+m.ID+'" data-name="'+esc(m['이름'])+'">')+'</div>';
+  }).join('');
 }
 function submitScore(){
   const eid = document.getElementById('fsEvent').value;
@@ -1510,7 +1542,7 @@ function delFee(id){
 function postFiles(p){ return String(p['파일ID목록']||'').split(',').filter(Boolean); }
 const isAdminRole = () => !!AUTH && (AUTH['직책']==='회장' || AUTH['직책']==='총무');
 const canEditPost = p => !!AUTH && (isAdminRole() || AUTH['이름'] === p['작성자']);
-const POST_TYPES = ['일반', '모임후기', '정회원 요청', '건의/질문']; // 공지는 회장·총무 전용
+const POST_TYPES = ['일반', '모임후기', '정회원 요청', '건의/질문']; // 공지는 운영진 전용
 let BOARD_FILTER = '전체';
 let AVG_N = 0; // 평균타수 기준 회차(0=전체), 서버(구글시트)에 저장·공유됨
 let FY_START = 7; // 회계연도 시작 월 (설정 탭에서 변경, 서버 공유)
@@ -1872,7 +1904,7 @@ function testNtfy(){
 /* ---------- 회칙 ---------- */
 function renderRules(){
   const el = document.getElementById('rulesView');
-  el.textContent = DATA.rules || '등록된 회칙이 없습니다. 회장·총무가 [회칙 수정]으로 등록할 수 있습니다.';
+  el.textContent = DATA.rules || '등록된 회칙이 없습니다. 운영진가 [회칙 수정]으로 등록할 수 있습니다.';
 }
 function openRules(){
   document.getElementById('frText').value = DATA.rules || '';
@@ -1885,8 +1917,10 @@ function submitRules(){
 }
 
 /* ---------- 조 편성 ---------- */
-let TEAMS = storeGet('usTeams') || []; // [[이름,...], ...] 조편성 결과 (브라우저에 유지)
-let PICKED = null; // 더블클릭 선택된 {g,i}
+const COURSES = ['동코스','서코스']; // 창원CC 코스
+let TEAMS = storeGet('usTeams') || [];
+let TEAM_META = storeGet('usTeamMeta') || {};
+let PICKED = null;
 
 function renderTeamSetup(){
   const el = document.getElementById('tmMembers');
@@ -1927,24 +1961,56 @@ function makeTeams(){
   for(let i=names.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [names[i],names[j]]=[names[j],names[i]]; }
   TEAMS = Array.from({length:g}, ()=>[]);
   names.forEach((n,i)=> TEAMS[i%g].push(n));
-  PICKED = null;
-  storeSet('usTeams', TEAMS);
+  PICKED = null; TEAM_META = {};
+  storeSet('usTeams', TEAMS); storeSet('usTeamMeta', TEAM_META);
   renderTeams(); renderScores();
   document.getElementById('tmCopyBtn').style.display = '';
 }
 
 function renderTeams(){
   const el = document.getElementById('teamBoard');
-  el.innerHTML = TEAMS.map((team,gi)=>
-    '<div class="team-box" data-g="'+gi+'" ondragover="event.preventDefault();this.classList.add(\'drop-hover\')" '+
-    'ondragleave="this.classList.remove(\'drop-hover\')" ondrop="dropChip(event,'+gi+')" onclick="boxClick('+gi+')">'+
-    '<h5>'+(gi+1)+'조 <small>('+team.length+'명)</small></h5>'+
-    team.map((n,i)=>
-      '<span class="tm-chip'+(PICKED&&PICKED.g===gi&&PICKED.i===i?' picked':'')+'" draggable="true" '+
-      'ondragstart="dragChip(event,'+gi+','+i+')" ondblclick="pickChip(event,'+gi+','+i+')">'+esc(n)+'</span>'
-    ).join('')+
-    '</div>'
-  ).join('');
+  el.innerHTML = TEAMS.map((team,gi)=>{
+    const meta = TEAM_META[gi] || {};
+    const info = [];
+    if(meta.tee) info.push('🕐 '+fmtTee(meta.tee));
+    if(meta.course) info.push('⛳ '+esc(meta.course));
+    const infoLine = info.length
+      ? '<div class="tm-info" onclick="event.stopPropagation();openTeamMeta('+gi+')">'+info.join(' · ')+' <span style="color:var(--accent)">✎</span></div>'
+      : '<div class="tm-info tm-info-empty" onclick="event.stopPropagation();openTeamMeta('+gi+')">＋ 티오프·코스 지정</div>';
+    return '<div class="team-box" data-g="'+gi+'" ondragover="event.preventDefault();this.classList.add(\'drop-hover\')" '+
+      'ondragleave="this.classList.remove(\'drop-hover\')" ondrop="dropChip(event,'+gi+')" onclick="boxClick('+gi+')">'+
+      '<h5>'+(gi+1)+'조 <small>('+team.length+'명)</small></h5>'+ infoLine +
+      team.map((n,i)=>
+        '<span class="tm-chip'+(PICKED&&PICKED.g===gi&&PICKED.i===i?' picked':'')+'" draggable="true" '+
+        'ondragstart="dragChip(event,'+gi+','+i+')" ondblclick="pickChip(event,'+gi+','+i+')">'+esc(n)+'</span>'
+      ).join('')+
+      '</div>';
+  }).join('');
+}
+let TEAM_META_G = null;
+function openTeamMeta(gi){
+  TEAM_META_G = gi; const meta = TEAM_META[gi] || {};
+  document.getElementById('tmMetaTitle').textContent = (gi+1)+'조 티오프·코스';
+  const t = String(meta.tee||'').match(/^(\d{1,2}):(\d{2})/);
+  let h = t ? Number(t[1]) : 7, mm = t ? t[2] : '00', ap = 'AM';
+  if(h >= 12){ ap='PM'; if(h>12) h-=12; } if(h===0) h=12;
+  document.getElementById('tmMetaAP').value = ap;
+  const hs = document.getElementById('tmMetaH'); hs.innerHTML='';
+  for(let i=1;i<=12;i++) hs.innerHTML += '<option'+(i===h?' selected':'')+'>'+i+'</option>';
+  const ms = document.getElementById('tmMetaM'); ms.innerHTML='';
+  ['00','10','20','30','40','50'].forEach(v=> ms.innerHTML += '<option'+(v===mm?' selected':'')+'>'+v+'</option>');
+  document.getElementById('tmMetaCourse').innerHTML = '<option value="">코스 선택</option>'+
+    COURSES.map(c=>'<option'+(meta.course===c?' selected':'')+'>'+c+'</option>').join('');
+  openModal('mTeamMeta');
+}
+function saveTeamMeta(){
+  let h = Number(document.getElementById('tmMetaH').value);
+  const mm = document.getElementById('tmMetaM').value;
+  const ap = document.getElementById('tmMetaAP').value;
+  if(ap==='PM' && h<12) h+=12; if(ap==='AM' && h===12) h=0;
+  TEAM_META[TEAM_META_G] = { tee: String(h).padStart(2,'0')+':'+mm, course: document.getElementById('tmMetaCourse').value };
+  storeSet('usTeamMeta', TEAM_META);
+  closeModal('mTeamMeta'); renderTeams(); toast('저장했습니다');
 }
 
 function dragChip(ev, g, i){ ev.dataTransfer.setData('text/plain', g+','+i); }
@@ -1972,7 +2038,10 @@ function boxClick(toG){
 
 function copyTeams(){
   if(!TEAMS.length) return;
-  const text = '[얼쑤회 조편성]\n' + TEAMS.map((t,i)=>(i+1)+'조: '+t.join(', ')).join('\n');
+  const text = '[얼쑤회 조편성]\n' + TEAMS.map((t,i)=>{
+    const mt = TEAM_META[i]||{}; const tag = [mt.tee?fmtTee(mt.tee):'', mt.course||''].filter(Boolean).join(' ');
+    return (i+1)+'조'+(tag?' ('+tag+')':'')+': '+t.join(', ');
+  }).join('\n');
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(()=>toast('조편성 결과를 복사했습니다'), ()=>fallbackCopy(text));
   } else fallbackCopy(text);
@@ -2101,7 +2170,7 @@ function shareKakao(id){
   if(!p) return;
   const title = (p['종류']==='공지'?'📌 [공지] ':'')+ p['제목'];
   const pageUrl = location.href.split('#')[0];
-  const text = '[얼쑤회] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
+  const text = '[얼쑤회·창원CC] '+title+'\n'+(p['내용']||'')+'\n작성자: '+p['작성자']+'\n'+pageUrl;
 
   const done = () => {
     if(confirm('공지 내용을 복사했습니다.\n카카오톡을 열어 붙여넣기 하시겠어요?')){
