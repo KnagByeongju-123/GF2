@@ -288,7 +288,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.6</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.7</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -485,6 +485,18 @@ td.num,th.num{text-align:right}
         <select id="setFyStart" style="font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)"></select>
         <button class="btn btn-primary" onclick="saveFyStart()">저장</button>
         <span id="fyPreview" style="font-size:12.5px;color:#5FE29B"></span>
+      </div>
+    </div>
+    <div class="card" style="padding:18px;margin-bottom:14px">
+      <h3 style="padding:0 0 10px;border:none">⛳ 월례회 불참 찬조금</h3>
+      <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.7;margin-bottom:12px">
+        월례회 불참 1회당 부과되는 찬조금 단가입니다. 참석 현황의 찬조금 계산에 적용됩니다.</p>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label style="font-size:13.5px;font-weight:700">회당 금액</label>
+        <input id="setFinePer" type="number" inputmode="numeric" step="10000" min="0" placeholder="50000" style="font:inherit;padding:8px 12px;width:130px;border:1px solid var(--line);border-radius:8px;background:#0D2C1F;color:var(--ink)">
+        <span style="font-size:13.5px;color:var(--ink-soft)">원</span>
+        <button class="btn btn-primary" onclick="saveFinePer()">저장</button>
+        <span id="finePreview" style="font-size:12.5px;color:#5FE29B"></span>
       </div>
     </div>
   </section>
@@ -884,6 +896,7 @@ function loadAll(){
     splitMembers(d.members);
     if(d.settings && d.settings.avgN != null) AVG_N = Number(d.settings.avgN) || 0;
     if(d.settings && d.settings.fyStartMonth) FY_START = Math.min(12, Math.max(1, Number(d.settings.fyStartMonth)||7));
+    if(d.settings && d.settings.finePer != null) FINE_PER = Math.max(0, Number(d.settings.finePer)||0);
     updateAuthUI();
     renderAll();
   });
@@ -1336,7 +1349,7 @@ function monthlyAttendCard(year){
   const rows = DATA.members.map(m => {
     const att = stat[m['이름']] || 0;
     const miss = meetings.length - att;
-    const fine = miss*50000;
+    const fine = miss*FINE_PER;
     const paid = finePaid[m['이름']] || 0;
     return { name: m['이름'], status: m['상태']||'', att, miss, fine, paid, due: Math.max(0, fine - paid) };
   }).sort((a,b)=> b.due - a.due || b.miss - a.miss || a.name.localeCompare(b.name,'ko'));
@@ -1356,7 +1369,7 @@ function monthlyAttendCard(year){
       '<td class="num" style="color:#5FE29B">'+(r.paid? won(r.paid) : '-')+'</td>'+
       '<td class="num" style="'+(r.due?'color:var(--flag);font-weight:800':'')+'">'+(r.due? won(r.due) : (r.fine?'완납':'-'))+'</td></tr>'
     ).join('')+'</table></div>'+
-    '<p style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">참석: 참가자 명단 또는 당일 타수 기록 · 찬조금: 회칙 제17조 불참 회당 5만원 · 납부: 회비 수입 중 내용에 "찬조" 포함 + 회원명 기재 건 자동 인식</p>'+
+    '<p style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">참석: 참가자 명단 또는 당일 타수 기록 · 찬조금: 불참 회당 '+won(FINE_PER)+'원 (설정 탭에서 변경) · 납부: 회비 수입 중 내용에 "찬조" 포함 + 회원명 기재 건 자동 인식</p>'+
     '</div>';
 }
 
@@ -1573,6 +1586,7 @@ const POST_TYPES = ['일반', '모임후기', '정회원 요청', '건의/질문
 let BOARD_FILTER = '전체';
 let AVG_N = 0; // 평균타수 기준 회차(0=전체), 서버(구글시트)에 저장·공유됨
 let FY_START = 7; // 회계연도 시작 월 (설정 탭에서 변경, 서버 공유)
+let FINE_PER = 50000; // 월례회 불참 찬조금 회당 단가 (설정 탭에서 변경, 서버 공유)
 
 function setBoardFilter(t){ BOARD_FILTER = t; renderBoard(); }
 
@@ -1888,6 +1902,25 @@ function renderSettings(){
     fyPreviewText();
     fySel.onchange = fyPreviewText;
   }
+  const fpEl = document.getElementById('setFinePer');
+  if(fpEl){
+    fpEl.value = String(FINE_PER);
+    finePreviewText();
+    fpEl.oninput = finePreviewText;
+  }
+}
+function finePreviewText(){
+  const v = Math.max(0, Number(document.getElementById('setFinePer').value)||0);
+  document.getElementById('finePreview').textContent = '예: 3회 불참 = '+won(v*3)+'원';
+}
+async function saveFinePer(){
+  const v = Math.max(0, Number(document.getElementById('setFinePer').value)||0);
+  try{
+    await callAsync('saveSetting', {key:'finePer', value:String(v)});
+    FINE_PER = v;
+    DATA.settings = DATA.settings || {}; DATA.settings.finePer = String(v);
+    renderFees(); toast('찬조금 단가를 저장했습니다 (전체 공유)');
+  }catch(err){ alert('저장 오류: '+err.message); }
 }
 function fyPreviewText(){
   const v = Number(document.getElementById('setFyStart').value)||7;
