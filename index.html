@@ -284,7 +284,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.4</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.5</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -570,11 +570,11 @@ td.num,th.num{text-align:right}
       <div style="display:flex;gap:6px" id="mcStBtns">
         <button type="button" class="ampm" data-st="" onclick="setMemStatus('')">정상</button>
         <button type="button" class="ampm" data-st="휴회" onclick="setMemStatus('휴회')">휴회</button>
-        <button type="button" class="ampm" data-st="탈퇴" onclick="setMemStatus('탈퇴')">탈퇴</button>
+        <button type="button" class="ampm" data-st="탈퇴" onclick="setMemStatus('탈퇴')">탈회</button>
       </div>
     </div>
     <div class="modal-actions" style="justify-content:space-between">
-      <button class="btn btn-ghost" onclick="openActivity(document.getElementById('mcName').dataset.name)">📋 활동내역</button>
+      <button class="btn btn-ghost" id="mcActBtn" onclick="openActivity(document.getElementById('mcName').dataset.name)">📋 활동내역</button>
       <button class="btn btn-ghost" onclick="closeModal('mMemCtl')">닫기</button>
     </div>
   </div>
@@ -1001,22 +1001,20 @@ function renderMembers(){
   const admin = isAdmin();
   if(!DATA.members.length){ el.innerHTML = '<div class="empty">등록된 회원이 없습니다.</div>'; return; }
   const sorted = [...DATA.members].sort((a,b)=> String(a['이름']).localeCompare(String(b['이름']), 'ko'));
-  el.innerHTML = '<table><tr><th>이름</th>'+((admin||AUTH)?'<th style="width:110px">관리</th>':'')+'<th>연락처</th><th style="white-space:nowrap">가입일</th><th style="white-space:nowrap">주소</th><th style="white-space:nowrap">회사명</th><th style="white-space:nowrap">비고</th></tr>' +
-    sorted.map(m =>
-      '<tr><td style="font-weight:700;white-space:nowrap'+(admin?';cursor:pointer':'')+'"'+(admin?' onclick="openMemCtl('+m.ID+')"':'')+'>'+esc(m['이름'])+(admin?' <span style="font-size:11px;color:var(--ink-soft)">▸</span>':'')+roleBadge(m['직책'])+statusBadge(m)+'</td>'+
-      ((admin || (AUTH && AUTH['이름']===m['이름'])) ? '<td style="white-space:nowrap">'+
-        (admin ? '<button class="btn btn-sm btn-ghost" onclick="openMember('+m.ID+')">수정</button>'
-               : '<button class="btn btn-sm btn-danger" onclick="delMember('+m.ID+',\''+esc(m['이름'])+'\')">탈퇴</button>')+'</td>'
-        : (admin ? '<td></td>' : ''))+
+  el.innerHTML = '<table><tr><th>이름</th>'+(admin?'<th style="width:70px">관리</th>':'')+'<th>연락처</th><th style="white-space:nowrap">가입일</th><th style="white-space:nowrap">주소</th><th style="white-space:nowrap">회사명</th><th style="white-space:nowrap">비고</th></tr>' +
+    sorted.map(m => {
+      const clickable = admin || (AUTH && AUTH['이름']===m['이름']);
+      return '<tr><td style="font-weight:700;white-space:nowrap'+(clickable?';cursor:pointer':'')+'"'+(clickable?' onclick="openMemCtl('+m.ID+')"':'')+'>'+esc(m['이름'])+(clickable?' <span style="font-size:11px;color:var(--ink-soft)">▸</span>':'')+roleBadge(m['직책'])+statusBadge(m)+'</td>'+
+      (admin ? '<td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openMember('+m.ID+')">수정</button></td>' : '')+
       '<td style="white-space:nowrap">'+esc(m['연락처'])+'</td>'+
       '<td style="white-space:nowrap">'+shortDate(m['가입일'])+'</td>'+
       '<td style="white-space:nowrap">'+esc(m['주소']||'')+'</td><td style="white-space:nowrap">'+esc(m['회사명']||'')+'</td>'+
-      '<td style="white-space:nowrap">'+esc(m['비고'])+'</td></tr>'
-    ).join('') + '</table>';
+      '<td style="white-space:nowrap">'+esc(m['비고'])+'</td></tr>';
+    }).join('') + '</table>';
   // 탈퇴 회원 (관리자만, 복원 가능)
   if(admin && DATA.membersRetired.length){
     el.innerHTML += '<div style="padding:12px 14px;border-top:1px solid var(--line)">'+
-      '<b style="font-size:13px;color:var(--ink-soft)">탈퇴 회원 '+DATA.membersRetired.length+'명</b> '+
+      '<b style="font-size:13px;color:var(--ink-soft)">탈회 회원 '+DATA.membersRetired.length+'명</b> '+
       '<span style="font-size:12px;color:var(--ink-soft)">— 복원하면 타수 이력·게시글이 그대로 되살아납니다</span>'+
       '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
       DATA.membersRetired.map(m =>
@@ -1038,32 +1036,40 @@ function findMemberById(id){
   return DATA.members.find(x=>x.ID==id) || DATA.membersRetired.find(x=>x.ID==id);
 }
 function openMemCtl(id){
-  if(!isAdmin()) return;
   const m = findMemberById(id);
   if(!m) return;
+  const admin = isAdmin();
+  const isSelf = AUTH && AUTH['이름']===m['이름'];
+  if(!admin && !isSelf) return;
   const st = m['상태'] || '';
   document.getElementById('mcId').value = id;
   const nameEl = document.getElementById('mcName');
-  nameEl.textContent = m['이름'] + ' 회원 관리';
+  nameEl.textContent = m['이름'] + (admin ? ' 회원 관리' : ' 내 상태 변경');
   nameEl.dataset.name = m['이름'];
-  document.getElementById('mcCurrent').textContent = st==='탈퇴' ? '탈퇴 ('+shortDate(m['탈퇴일']||'')+')' : (st==='휴회' ? '휴회' : '정상');
-  // 현재 상태 하이라이트, 탈퇴자는 [정상복귀/활동내역]만
+  document.getElementById('mcCurrent').textContent = st==='탈퇴' ? '탈회 ('+shortDate(m['탈퇴일']||'')+')' : (st==='휴회' ? '휴회' : '정상');
   document.querySelectorAll('#mcStBtns .ampm').forEach(b => {
     b.classList.toggle('on', b.dataset.st === st);
     b.textContent = (b.dataset.st==='' ? (st==='탈퇴' ? '정상 복귀' : '정상') : b.dataset.st);
     b.style.display = (st==='탈퇴' && b.dataset.st!=='') ? 'none' : '';
   });
+  document.getElementById('mcActBtn').style.display = admin ? '' : 'none';
   openModal('mMemCtl');
 }
 function setMemStatus(st){
   const id = document.getElementById('mcId').value;
   const m = findMemberById(id);
   if(!m || (m['상태']||'') === st) { closeModal('mMemCtl'); return; }
-  const label = st==='' ? '정상' : st;
-  if(st==='탈퇴' && !confirm(m['이름']+'님을 탈퇴 처리할까요?\n(기록은 보존되며 복원 가능합니다)')) return;
+  const isSelf = AUTH && AUTH['이름']===m['이름'];
+  const label = st==='' ? '정상' : (st==='탈퇴' ? '탈회' : st);
+  if(st==='탈퇴'){
+    const msg = isSelf ? '정말 탈회하시겠어요? 탈회 후 로그아웃됩니다.\n(기록은 보존되며 재가입 시 복원됩니다)'
+                       : m['이름']+'님을 탈회 처리할까요?\n(기록은 보존되며 복원 가능합니다)';
+    if(!confirm(msg)) return;
+  }
   call('setMemberStatus', {ID:id, '상태':st}, d => {
-    splitMembers(d); renderAll(); closeModal('mMemCtl');
-    toast(m['이름']+'님을 '+label+' 처리했습니다');
+    splitMembers(d); closeModal('mMemCtl');
+    if(st==='탈퇴' && isSelf){ logout(); toast('탈회 처리되었습니다'); }
+    else { renderAll(); toast(m['이름']+'님을 '+label+' 처리했습니다'); }
   });
 }
 
@@ -1372,7 +1378,7 @@ function submitMember(){
   if(!document.getElementById('fmId').value){
     const retired = DATA.membersRetired.find(x => x['이름'] === name);
     if(retired){
-      if(confirm('같은 이름의 탈퇴 회원이 있습니다 ('+name+', 탈퇴일 '+shortDate(retired['탈퇴일']||'')+').\n\n[확인] 기존 회원 복원 (이전 기록 유지)\n[취소] 동명이인 신규 등록 (기록 새로 시작)')){
+      if(confirm('같은 이름의 탈회 회원이 있습니다 ('+name+', 탈회일 '+shortDate(retired['탈퇴일']||'')+').\n\n[확인] 기존 회원 복원 (이전 기록 유지)\n[취소] 동명이인 신규 등록 (기록 새로 시작)')){
         restoreMember(retired.ID, name);
         closeModal('mMember');
         return;
