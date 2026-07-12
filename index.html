@@ -66,6 +66,9 @@ nav button:hover:not(.on){color:#fff;background:rgba(255,255,255,.10)}
 @media(prefers-reduced-motion:reduce){nav button{transition:none}}
 
 main{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
+input[type="date"],input[type="time"]{color-scheme:dark}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(1.6);cursor:pointer;opacity:.9}
 .fee-sticky{position:sticky;top:var(--hdr-h,64px);z-index:70;
   background:#0A241A;margin:0 -20px 22px;padding:14px 20px 6px;
   box-shadow:0 6px 12px -6px rgba(0,0,0,.45)}
@@ -281,7 +284,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.3</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.4</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
