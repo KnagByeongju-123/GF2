@@ -288,7 +288,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 3.1</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 3.2</span></h1>
     <span class="cc" style="margin-left:auto">창원CC</span>
     <span style="margin-left:10px" id="authArea"></span>
   </div>
@@ -862,9 +862,7 @@ function toast(msg){
 // 데이터 API: Supabase (도쿄) — 콜드스타트 없음
 const SUPA_URL = 'https://jgvikmakenpllwxwdugk.supabase.co/rest/v1/rpc/us_api';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpndmlrbWFrZW5wbGx3eHdkdWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzA3OTcsImV4cCI6MjA5MjYwNjc5N30.Vm-MDfZFf7-ay0ipXJQ8QkZvUa9ZXGXzboHgU8dy9cg';
-// 이미지도 Supabase(us_api)에 base64로 저장·조회 (Google Drive 대체)
-// 구형(드라이브) 이미지는 읽기 전용 폴백으로만 사용
-const IMG_GAS = 'https://script.google.com/macros/s/AKfycbyVe8avu7xqYzrcTAQl4hWyZxFWNJPSyUqm26pvOgPAqXc35kMGaQ3rh-Zg3Au0AXQqFA/exec';
+// 이미지는 Supabase(us_api)에 base64로 저장·조회
 
 // ---- 날짜/시간 정규화 (백엔드가 ISO 원시값을 보내도 안전하게 표시) ----
 function fmtD(v){
@@ -1731,15 +1729,8 @@ async function loadProxyImages(rootSel){
     el.removeAttribute('data-img');
     try{
       const b64 = await callAsync('getImage', { id });
-      if(b64){ el.src = 'data:image/jpeg;base64,' + b64; continue; }
+      if(b64) el.src = 'data:image/jpeg;base64,' + b64;
     }catch(e){}
-    if(!/^\d+$/.test(id)){
-      try{
-        const r = await fetch(IMG_GAS + '?img=' + encodeURIComponent(id));
-        const dataUrl = await r.text();
-        if(dataUrl.startsWith('data:')) el.src = dataUrl;
-      }catch(e){}
-    }
   }
 }
 
