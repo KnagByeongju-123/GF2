@@ -288,7 +288,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 2.9</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 3.0</span></h1>
     <span class="cc" style="margin-left:auto">창원CC</span>
     <span style="margin-left:10px" id="authArea"></span>
   </div>
@@ -526,9 +526,12 @@ td.num,th.num{text-align:right}
         <input id="fmPin" type="password" inputmode="numeric" placeholder="수정 시 빈칸=유지"></div>
     </div>
     <div class="field"><label>비고</label><input id="fmNote"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('mMember')">취소</button>
-      <button class="btn btn-primary" onclick="submitMember()">저장</button>
+    <div class="modal-actions" style="justify-content:space-between">
+      <button class="btn btn-ghost" id="fmDelBtn" style="display:none;color:#e5484d;border-color:#e5484d" onclick="purgeMemberConfirm()">삭제</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeModal('mMember')">취소</button>
+        <button class="btn btn-primary" onclick="submitMember()">저장</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1396,6 +1399,7 @@ function openMember(id){
   document.getElementById('fmRole').value = m ? (m['직책'] || '일반') : '일반';
   document.getElementById('fmPin').value = '';
   document.getElementById('fmNote').value = m ? m['비고'] : '';
+  document.getElementById('fmDelBtn').style.display = m ? '' : 'none';
   openModal('mMember');
 }
 function submitMember(){
@@ -1420,6 +1424,15 @@ function submitMember(){
     '직책': document.getElementById('fmRole').value, 'PIN': document.getElementById('fmPin').value };
   closeModal('mMember');
   call('saveMember', m, d => { splitMembers(d); renderAll(); toast('저장했습니다'); });
+}
+
+function purgeMemberConfirm(){
+  const id = document.getElementById('fmId').value;
+  const name = document.getElementById('fmName').value.trim();
+  if(!id){ return; }
+  if(!confirm('\u26a0\ufe0f ' + name + ' \ud68c\uc6d0\uc744 \uba85\ub2e8\uc5d0\uc11c \uc644\uc804\ud788 \uc0ad\uc81c\ud569\ub2c8\ub2e4.\n\n\uc624\ub4f1\ub85d \uc815\uc815\uc6a9 \uae30\ub2a5\uc785\ub2c8\ub2e4. \uc0ad\uc81c\ud558\uba74 \ubcf5\uad6c\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.\n(\ud0c8\ud68c \ucc98\ub9ac\uc640 \ub2ec\ub9ac \ubcf5\uc6d0\ub418\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.)\n\n\uc0ad\uc81c\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?')){ return; }
+  closeModal('mMember');
+  call('purgeMember', {ID:id}, d => { splitMembers(d); renderAll(); toast(name + ' \ud68c\uc6d0\uc744 \uc0ad\uc81c\ud588\uc2b5\ub2c8\ub2e4.'); });
 }
 function delMember(id, name){
   const isSelf = AUTH && AUTH['이름'] === name;
