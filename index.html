@@ -288,7 +288,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.7</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="cc">창원CC</span> <span class="rev">Rev. 2.8</span></h1>
     <span style="margin-left:auto" id="authArea"></span>
   </div>
   <nav>
@@ -510,6 +510,12 @@ td.num,th.num{text-align:right}
     <div class="field"><label>이름 *</label><input id="fmName"></div>
     <div class="field"><label>연락처</label><input id="fmPhone" placeholder="010-0000-0000"></div>
     <div class="field"><label>가입일</label><input id="fmJoin" type="date"></div>
+    <div class="field"><label>생년월일</label>
+      <div style="display:flex;gap:6px">
+        <input id="fmBirth" type="date" style="flex:1;min-width:0">
+        <select id="fmBirthCal" style="width:72px"><option value="양">양력</option><option value="음">음력</option></select>
+      </div>
+    </div>
     <div class="field"><label>주소</label><input id="fmAddr"></div>
     <div class="field"><label>회사명</label><input id="fmCompany"></div>
     <div class="row2">
@@ -861,7 +867,7 @@ function norm(d){
     Object.keys(d).forEach(k => {
       if(Array.isArray(d[k])) norm(d[k]);
       else if(k === '티오프') d[k] = fmtT(d[k]);
-      else if(k === '날짜' || k === '가입일') d[k] = fmtD(d[k]);
+      else if(k === '날짜' || k === '가입일' || k === '생년월일') d[k] = fmtD(d[k]);
     });
   }
   return d;
@@ -1018,13 +1024,14 @@ function renderMembers(){
   const admin = isAdmin();
   if(!DATA.members.length){ el.innerHTML = '<div class="empty">등록된 회원이 없습니다.</div>'; return; }
   const sorted = [...DATA.members].sort((a,b)=> String(a['이름']).localeCompare(String(b['이름']), 'ko'));
-  el.innerHTML = '<table><tr><th>이름</th>'+(admin?'<th style="width:70px">관리</th>':'')+'<th>연락처</th><th style="white-space:nowrap">가입일</th><th style="white-space:nowrap">주소</th><th style="white-space:nowrap">회사명</th><th style="white-space:nowrap">비고</th></tr>' +
+  el.innerHTML = '<table><tr><th>이름</th>'+(admin?'<th style="width:70px">관리</th>':'')+'<th>연락처</th><th style="white-space:nowrap">가입일</th><th style="white-space:nowrap">생년월일</th><th style="white-space:nowrap">주소</th><th style="white-space:nowrap">회사명</th><th style="white-space:nowrap">비고</th></tr>' +
     sorted.map(m => {
       const clickable = admin || (AUTH && AUTH['이름']===m['이름']);
       return '<tr><td style="font-weight:700;white-space:nowrap'+(clickable?';cursor:pointer':'')+'"'+(clickable?' onclick="openMemCtl('+m.ID+')"':'')+'>'+esc(m['이름'])+(clickable?' <span style="font-size:11px;color:var(--ink-soft)">▸</span>':'')+roleBadge(m['직책'])+statusBadge(m)+'</td>'+
       (admin ? '<td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openMember('+m.ID+')">수정</button></td>' : '')+
       '<td style="white-space:nowrap">'+esc(m['연락처'])+'</td>'+
       '<td style="white-space:nowrap">'+shortDate(m['가입일'])+'</td>'+
+      '<td style="white-space:nowrap">'+(m['생년월일']?shortDate(m['생년월일'])+' <span style="font-size:10px;color:var(--ink-soft)">('+(m['양음력']==='음'?'음':'양')+')</span>':'-')+'</td>'+
       '<td style="white-space:nowrap">'+esc(m['주소']||'')+'</td><td style="white-space:nowrap">'+esc(m['회사명']||'')+'</td>'+
       '<td style="white-space:nowrap">'+esc(m['비고'])+'</td></tr>';
     }).join('') + '</table>';
@@ -1381,6 +1388,8 @@ function openMember(id){
   document.getElementById('fmName').value = m ? m['이름'] : '';
   document.getElementById('fmPhone').value = m ? m['연락처'] : '';
   document.getElementById('fmJoin').value = m ? m['가입일'] : today();
+  document.getElementById('fmBirth').value = m ? (m['생년월일']||'') : '';
+  document.getElementById('fmBirthCal').value = m ? (m['양음력']||'양') : '양';
   document.getElementById('fmAddr').value = m ? (m['주소']||'') : '';
   document.getElementById('fmCompany').value = m ? (m['회사명']||'') : '';
   document.getElementById('fmRole').value = m ? (m['직책'] || '일반') : '일반';
@@ -1405,6 +1414,7 @@ function submitMember(){
   const m = { ID: document.getElementById('fmId').value || null,
     '이름': name, '연락처': document.getElementById('fmPhone').value,
     '가입일': document.getElementById('fmJoin').value, '비고': document.getElementById('fmNote').value,
+    '생년월일': document.getElementById('fmBirth').value, '양음력': document.getElementById('fmBirthCal').value,
     '주소': document.getElementById('fmAddr').value, '회사명': document.getElementById('fmCompany').value,
     '직책': document.getElementById('fmRole').value, 'PIN': document.getElementById('fmPin').value };
   closeModal('mMember');
