@@ -288,7 +288,7 @@ td.num,th.num{text-align:right}
   </video>
   <div class="hwrap">
   <div class="brand">
-    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 3.0</span></h1>
+    <h1><span class="flag">⛳</span> 얼쑤회 <span class="rev">Rev. 3.1</span></h1>
     <span class="cc" style="margin-left:auto">창원CC</span>
     <span style="margin-left:10px" id="authArea"></span>
   </div>
@@ -349,7 +349,7 @@ td.num,th.num{text-align:right}
     <div class="page-head"><h2>타수기록</h2>
       <span>
         <button class="btn btn-ghost" onclick="go('rank',document.querySelector('[data-tab=rank]'))">평균타수 보기</button>
-        <button class="btn btn-primary admin-only" style="margin-left:6px" onclick="openScore()">＋ 타수 입력</button>
+        <button class="btn btn-primary auth-only" style="margin-left:6px" onclick="openScore()">＋ 타수 입력</button>
         <button class="btn admin-only" style="margin-left:6px;background:linear-gradient(180deg,#E4C378,#C29A3F);color:#1B1508" onclick="includeScores()">업데이트</button>
       </span></div>
     <div class="card"><h3 id="scoreTitle">당회 기록</h3><div id="scoreList"></div></div>
@@ -407,7 +407,7 @@ td.num,th.num{text-align:right}
   <!-- 조편성 -->
   <section id="tab-teams" hidden>
     <div class="page-head"><h2>조 편성</h2></div>
-    <div class="card" style="padding:16px;margin-bottom:14px">
+    <div class="card" id="tmSetupCard" style="padding:16px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
         <b style="font-size:14px">참가자 선택 <span id="tmCount" style="color:var(--ink-soft);font-weight:600"></span></b>
         <span>
@@ -599,10 +599,26 @@ td.num,th.num{text-align:right}
         <button type="button" class="ampm" data-st="탈퇴" onclick="setMemStatus('탈퇴')">탈회</button>
       </div>
     </div>
+    <div class="field" style="margin-top:6px">
+      <label>사진</label>
+      <div id="mcPhotoView" style="text-align:center;margin-bottom:8px"></div>
+      <input id="mcPhotoFile" type="file" accept="image/*" onchange="submitMemberPhoto()">
+      <p style="font-size:12px;color:var(--ink-soft);margin-top:5px">자동으로 50KB 이하 JPEG로 압축되어 서버에 저장됩니다.</p>
+      <div id="mcPhotoProg" style="font-size:13px;font-weight:700;color:#5FE29B"></div>
+    </div>
     <div class="modal-actions" style="justify-content:space-between">
       <button class="btn btn-ghost" id="mcActBtn" onclick="openActivity(document.getElementById('mcName').dataset.name)">📋 활동내역</button>
       <button class="btn btn-ghost" onclick="closeModal('mMemCtl')">닫기</button>
     </div>
+  </div>
+</div>
+
+<!-- 사진 팝업 모달 -->
+<div class="modal-bg" id="mPhoto">
+  <div class="modal" style="max-width:420px">
+    <h3 id="phTitle">사진</h3>
+    <div id="phBody" style="text-align:center;min-height:80px"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('mPhoto')">닫기</button></div>
   </div>
 </div>
 
@@ -669,7 +685,7 @@ td.num,th.num{text-align:right}
 <!-- 스코어 모달 -->
 <div class="modal-bg" id="mScore">
   <div class="modal">
-    <h3>타수 입력</h3>
+    <h3 id="mScoreTitle">타수 입력</h3>
     <div class="field"><label>모임 선택 *</label><select id="fsEvent"></select></div>
     <div class="field"><label>회원별 타수 (빈칸은 저장 안 됨)</label>
       <div id="fsRows" style="max-height:300px;overflow-y:auto"></div>
@@ -698,7 +714,7 @@ td.num,th.num{text-align:right}
     </div>
     <div class="field"><label>영수증 첨부 (사진촬영 / 불러오기 · 여러 장)</label>
       <input id="ffFiles" type="file" accept="image/*" multiple>
-      <p id="ffFileNote" style="font-size:12px;color:var(--ink-soft);margin-top:5px">자동으로 30KB 이하 JPEG로 압축되어 구글드라이브에 저장됩니다.</p>
+      <p id="ffFileNote" style="font-size:12px;color:var(--ink-soft);margin-top:5px">자동으로 100KB 이하 JPEG로 압축되어 서버에 저장됩니다.</p>
     </div>
     <div id="ffProgress" style="font-size:13px;font-weight:700;color:#5FE29B"></div>
     <div class="modal-actions">
@@ -736,7 +752,7 @@ td.num,th.num{text-align:right}
     <div class="field"><label>내용</label><textarea id="fpContent" rows="5"></textarea></div>
     <div class="field"><label>사진 첨부 (여러 장 가능)</label>
       <input id="fpFiles" type="file" accept="image/*" multiple>
-      <p id="fpFileNote" style="font-size:12px;color:var(--ink-soft);margin-top:5px">자동으로 50KB 이하 JPEG로 압축되어 구글드라이브에 저장됩니다.</p>
+      <p id="fpFileNote" style="font-size:12px;color:var(--ink-soft);margin-top:5px">자동으로 100KB 이하 JPEG로 압축되어 서버에 저장됩니다.</p>
     </div>
     <div id="fpProgress" style="font-size:13px;font-weight:700;color:#5FE29B"></div>
     <div class="modal-actions">
@@ -757,7 +773,7 @@ td.num,th.num{text-align:right}
   </div>
 </div>
 
-<div id="loading"><div class="ball"></div><p>구글드라이브 연결 중...</p></div>
+<div id="loading"><div class="ball"></div><p>서버 연결 중...</p></div>
 <div id="toast"></div>
 
 <script>
@@ -808,6 +824,7 @@ function updateAuthUI(){
     ? (AUTH['직책']==='일반' ? '' : '<b>'+esc(AUTH['직책'])+'</b> ')+esc(AUTH['이름'])+'님 <button onclick="logout()">로그아웃</button>'
     : (GUEST ? '손님 <button onclick="openLogin()">로그인</button>' : '<button onclick="openLogin()">로그인</button>');
   document.querySelectorAll('.admin-only').forEach(b => b.style.display = isAdmin() ? '' : 'none');
+  document.querySelectorAll('.auth-only').forEach(b => b.style.display = AUTH ? '' : 'none');
   updateTabs();
 }
 
@@ -845,8 +862,9 @@ function toast(msg){
 // 데이터 API: Supabase (도쿄) — 콜드스타트 없음
 const SUPA_URL = 'https://jgvikmakenpllwxwdugk.supabase.co/rest/v1/rpc/us_api';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpndmlrbWFrZW5wbGx3eHdkdWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzA3OTcsImV4cCI6MjA5MjYwNjc5N30.Vm-MDfZFf7-ay0ipXJQ8QkZvUa9ZXGXzboHgU8dy9cg';
-// 이미지 API: 기존 GAS (드라이브 업로드/프록시 전용)
-const IMG_API = 'https://script.google.com/macros/s/AKfycbyVe8avu7xqYzrcTAQl4hWyZxFWNJPSyUqm26pvOgPAqXc35kMGaQ3rh-Zg3Au0AXQqFA/exec';
+// 이미지도 Supabase(us_api)에 base64로 저장·조회 (Google Drive 대체)
+// 구형(드라이브) 이미지는 읽기 전용 폴백으로만 사용
+const IMG_GAS = 'https://script.google.com/macros/s/AKfycbyVe8avu7xqYzrcTAQl4hWyZxFWNJPSyUqm26pvOgPAqXc35kMGaQ3rh-Zg3Au0AXQqFA/exec';
 
 // ---- 날짜/시간 정규화 (백엔드가 ISO 원시값을 보내도 안전하게 표시) ----
 function fmtD(v){
@@ -894,12 +912,9 @@ function call(action, payload, done){
     })
     .catch(err => { loading(false); alert('연결 오류: ' + err.message); });
 }
-// 이미지 업로드/삭제 전용 (GAS → 구글드라이브)
-function imgCall(action, payload){
-  return fetch(IMG_API, { method:'POST', body: JSON.stringify({ action, payload }) })
-    .then(r => r.json())
-    .then(res => { if(res.error) throw new Error(res.error); return res.data; });
-}
+// 이미지 업로드/삭제/조회 (Supabase us_api)
+function imgUpload(kind, base64){ return callAsync('uploadImage', { kind, base64 }).then(d => String(d.id)); }
+function imgDelete(ids){ return callAsync('deleteImages', { ids: String(ids||'') }); }
 function loadAll(){
   call('getAll', null, d => {
     DATA = d;
@@ -907,6 +922,7 @@ function loadAll(){
     if(d.settings && d.settings.avgN != null) AVG_N = Number(d.settings.avgN) || 0;
     if(d.settings && d.settings.fyStartMonth) FY_START = Math.min(12, Math.max(1, Number(d.settings.fyStartMonth)||7));
     if(d.settings && d.settings.finePer != null) FINE_PER = Math.max(0, Number(d.settings.finePer)||0);
+    loadTeamsFromServer();
     updateAuthUI();
     renderAll();
   });
@@ -1030,8 +1046,9 @@ function renderMembers(){
   const sorted = [...DATA.members].sort((a,b)=> String(a['이름']).localeCompare(String(b['이름']), 'ko'));
   el.innerHTML = '<table><tr><th>이름</th>'+(admin?'<th style="width:70px">관리</th>':'')+'<th>연락처</th><th style="white-space:nowrap">가입일</th><th style="white-space:nowrap">생년월일</th><th style="white-space:nowrap">주소</th><th style="white-space:nowrap">회사명</th><th style="white-space:nowrap">비고</th></tr>' +
     sorted.map(m => {
-      const clickable = admin || (AUTH && AUTH['이름']===m['이름']);
-      return '<tr><td style="font-weight:700;white-space:nowrap'+(clickable?';cursor:pointer':'')+'"'+(clickable?' onclick="openMemCtl('+m.ID+')"':'')+'>'+esc(m['이름'])+(clickable?' <span style="font-size:11px;color:var(--ink-soft)">▸</span>':'')+roleBadge(m['직책'])+statusBadge(m)+'</td>'+
+      const manage = admin || (AUTH && AUTH['이름']===m['이름']);
+      const handler = manage ? 'openMemCtl('+m.ID+')' : 'openMemberPhoto('+m.ID+')';
+      return '<tr><td style="font-weight:700;white-space:nowrap;cursor:pointer" onclick="'+handler+'">'+esc(m['이름'])+' <span style="font-size:11px;color:var(--ink-soft)">▸</span>'+roleBadge(m['직책'])+statusBadge(m)+'</td>'+
       (admin ? '<td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openMember('+m.ID+')">수정</button></td>' : '')+
       '<td style="white-space:nowrap">'+esc(m['연락처'])+'</td>'+
       '<td style="white-space:nowrap">'+shortDate(m['가입일'])+'</td>'+
@@ -1081,7 +1098,53 @@ function openMemCtl(id){
     b.style.display = (st==='탈퇴' && b.dataset.st!=='') ? 'none' : '';
   });
   document.getElementById('mcActBtn').style.display = admin ? '' : 'none';
+  document.getElementById('mcPhotoFile').value = '';
+  document.getElementById('mcPhotoProg').textContent = '';
+  document.getElementById('mcPhotoView').innerHTML = m['사진']
+    ? '<img data-img="'+m['사진']+'" alt="회원 사진" style="max-width:200px;max-height:200px;border-radius:12px;border:1px solid var(--line)">'
+    : '<div class="empty" style="padding:14px">등록된 사진 없음</div>';
+  if(m['사진']) loadProxyImages('#mcPhotoView');
   openModal('mMemCtl');
+}
+async function submitMemberPhoto(){
+  const id = document.getElementById('mcId').value;
+  const f = document.getElementById('mcPhotoFile').files[0];
+  if(!f) return;
+  const prog = document.getElementById('mcPhotoProg');
+  try{
+    prog.textContent = '사진 업로드 중...';
+    const base64 = await compressImage(f, 50*1024);
+    const imgId = await imgUpload('member', base64);
+    const d = await callAsync('setMemberPhoto', { ID:id, imgId });
+    splitMembers(d);
+    const m = findMemberById(id);
+    document.getElementById('mcPhotoView').innerHTML =
+      '<img data-img="'+m['사진']+'" alt="회원 사진" style="max-width:200px;max-height:200px;border-radius:12px;border:1px solid var(--line)">';
+    loadProxyImages('#mcPhotoView');
+    renderMembers();
+    toast('사진을 등록했습니다');
+  }catch(err){ alert('사진 오류: ' + err.message); }
+  document.getElementById('mcPhotoFile').value = '';
+  prog.textContent = '';
+}
+function openMemberPhoto(id){
+  const m = findMemberById(id); if(!m) return;
+  document.getElementById('phTitle').textContent = m['이름'] + ' 회원';
+  const body = document.getElementById('phBody');
+  if(m['사진']){
+    body.innerHTML = '<img data-img="'+m['사진']+'" alt="회원 사진" style="max-width:100%;max-height:60vh;border-radius:12px">';
+    openModal('mPhoto'); loadProxyImages('#phBody');
+  } else {
+    body.innerHTML = '<div class="empty" style="padding:24px">등록된 사진이 없습니다.</div>';
+    openModal('mPhoto');
+  }
+}
+function zoomImg(el){
+  if(!el || !el.src) return;
+  document.getElementById('phTitle').textContent = '사진';
+  document.getElementById('phBody').innerHTML =
+    '<img alt="사진" src="'+el.src+'" style="max-width:100%;max-height:70vh;border-radius:12px">';
+  openModal('mPhoto');
 }
 function setMemStatus(st){
   const id = document.getElementById('mcId').value;
@@ -1501,8 +1564,10 @@ function delEvent(id){
 
 /* ---------- 스코어 ---------- */
 function openScore(){
+  if(!AUTH){ alert('로그인 후 타수를 등록할 수 있습니다.'); openLogin(); return; }
   if(!DATA.events.length){ alert('먼저 모임을 등록하세요.'); return; }
   if(!DATA.members.length){ alert('먼저 회원을 등록하세요.'); return; }
+  document.getElementById('mScoreTitle').textContent = isAdmin() ? '타수 입력' : '내 타수 등록';
   const sel = document.getElementById('fsEvent');
   sel.innerHTML = [...DATA.events].sort((a,b)=>a['날짜']<b['날짜']?1:-1)
     .map(e => '<option value="'+e.ID+'">'+e['날짜']+' · '+esc(e['골프장'])+'</option>').join('');
@@ -1512,12 +1577,16 @@ function renderFsRows(){
   const ev = DATA.events.find(x=>x.ID==document.getElementById('fsEvent').value);
   const players = String(ev&&ev['참가자']||'').split(',').map(x=>x.trim()).filter(Boolean);
   const hasList = players.length > 0;
-  const list = DATA.members.filter(m=>!m['상태']);
-  const note = hasList
-    ? '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">이 모임 참가자 '+players.length+'명. 불참 회원은 입력란 대신 <b>불참</b>으로 표시됩니다.</p>'
-    : '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">참가자 명단이 없는 모임이라 전체 회원에 입력란을 표시합니다.</p>';
+  const admin = isAdmin();
+  let list = DATA.members.filter(m=>!m['상태']);
+  if(!admin && AUTH) list = list.filter(m=>m['이름']===AUTH['이름']); // 본인 타수만
+  const note = !admin
+    ? '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">본인 타수를 입력해 등록합니다.</p>'
+    : (hasList
+      ? '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">이 모임 참가자 '+players.length+'명. 불참 회원은 입력란 대신 <b>불참</b>으로 표시됩니다.</p>'
+      : '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">참가자 명단이 없는 모임이라 전체 회원에 입력란을 표시합니다.</p>');
   document.getElementById('fsRows').innerHTML = note + list.map(m => {
-    const absent = hasList && !players.includes(m['이름']);
+    const absent = admin && hasList && !players.includes(m['이름']);
     return '<div class="score-row"><span>'+esc(m['이름'])+'</span>'+
       (absent
         ? '<span class="badge" style="background:#3A2320;color:#F0A090">불참</span>'
@@ -1563,7 +1632,7 @@ function openFee(id){
   const rc = f ? String(f['영수증']||'').split(',').filter(Boolean).length : 0;
   document.getElementById('ffFileNote').textContent = rc
     ? '기존 영수증 '+rc+'장은 유지되며, 선택한 사진이 추가됩니다.'
-    : '자동으로 30KB 이하 JPEG로 압축되어 구글드라이브에 저장됩니다.';
+    : '자동으로 100KB 이하 JPEG로 압축되어 서버에 저장됩니다.';
   openModal('mFee');
 }
 async function submitFee(){
@@ -1582,10 +1651,9 @@ async function submitFee(){
     let fees = saved.fees;
     for(let i = 0; i < files.length; i++){
       prog.textContent = '영수증 업로드 중... ('+(i+1)+'/'+files.length+')';
-      const base64 = await compressImage(files[i], 30*1024); // 30KB 이하
-      const name = '영수증_'+document.getElementById('ffDate').value+'_'+String(i+1).padStart(2,'0')+'.jpg';
-      const up = await imgCall('uploadImage', { kind:'receipt', '파일명': name, base64 });
-      fees = await callAsync('addReceipt', { feeId: saved.ID, fileId: up.fileId });
+      const base64 = await compressImage(files[i], 100*1024); // 100KB 이하
+      const imgId = await imgUpload('receipt', base64);
+      fees = await callAsync('addReceipt', { feeId: saved.ID, fileId: imgId });
     }
     DATA.fees = fees;
     closeModal('mFee'); renderAll(); toast('저장했습니다');
@@ -1598,7 +1666,7 @@ function delFee(id){
   const rcs = fee ? String(fee['영수증']||'') : '';
   call('deleteFee', {ID:id}, d => {
     DATA.fees = d; renderAll(); toast('삭제했습니다');
-    if(rcs) imgCall('deleteFiles', {fileIds: rcs}).catch(()=>{});
+    if(rcs) imgDelete(rcs).catch(()=>{});
   });
 }
 
@@ -1637,8 +1705,7 @@ function renderBoard(){
     const type = p['종류'] || '일반';
     const isNotice = type === '공지';
     const thumbs = postFiles(p).map(f =>
-      '<a href="https://drive.google.com/file/d/'+f+'/view" target="_blank">'+
-      '<img loading="lazy" data-img="'+f+'" alt="첨부사진"></a>').join('');
+      '<img loading="lazy" data-img="'+f+'" alt="첨부사진" style="cursor:zoom-in" onclick="zoomImg(this)">').join('');
     return '<article class="post'+(isNotice?' notice':'')+'">'+
       '<div class="post-head"><h4><span class="cat-badge'+(isNotice?' notice':'')+'">'+
       (isNotice?'📌 공지':esc(type))+'</span>'+esc(p['제목'])+'</h4>'+
@@ -1663,10 +1730,16 @@ async function loadProxyImages(rootSel){
     const id = el.getAttribute('data-img');
     el.removeAttribute('data-img');
     try{
-      const r = await fetch(IMG_API + '?img=' + encodeURIComponent(id));
-      const dataUrl = await r.text();
-      if(dataUrl.startsWith('data:')) el.src = dataUrl;
+      const b64 = await callAsync('getImage', { id });
+      if(b64){ el.src = 'data:image/jpeg;base64,' + b64; continue; }
     }catch(e){}
+    if(!/^\d+$/.test(id)){
+      try{
+        const r = await fetch(IMG_GAS + '?img=' + encodeURIComponent(id));
+        const dataUrl = await r.text();
+        if(dataUrl.startsWith('data:')) el.src = dataUrl;
+      }catch(e){}
+    }
   }
 }
 
@@ -1687,7 +1760,7 @@ function openPost(id){
   document.getElementById('fpProgress').textContent = '';
   document.getElementById('fpFileNote').textContent = p && postFiles(p).length
     ? '기존 사진 '+postFiles(p).length+'장은 유지되며, 선택한 사진이 추가됩니다.'
-    : '자동으로 50KB 이하 JPEG로 압축되어 구글드라이브에 저장됩니다.';
+    : '자동으로 100KB 이하 JPEG로 압축되어 서버에 저장됩니다.';
   openModal('mPost');
 }
 
@@ -1747,10 +1820,9 @@ async function submitPost(){
     let posts = saved.posts;
     for(let i = 0; i < files.length; i++){
       prog.textContent = '사진 업로드 중... ('+(i+1)+'/'+files.length+')';
-      const base64 = await compressImage(files[i], 50*1024);
-      const name = today()+'_'+String(i+1).padStart(2,'0')+'_'+files[i].name.replace(/\.[^.]+$/,'')+'.jpg';
-      const up = await imgCall('uploadImage', { kind:'photo', '파일명': name, base64 });
-      posts = await callAsync('addPhoto', { postId, fileId: up.fileId });
+      const base64 = await compressImage(files[i], 100*1024);
+      const imgId = await imgUpload('photo', base64);
+      posts = await callAsync('addPhoto', { postId, fileId: imgId });
     }
     DATA.posts = posts;
     closeModal('mPost'); renderBoard(); toast('게시글을 등록했습니다'); // 새 글 알림은 서버가 자동 발송
@@ -1759,10 +1831,10 @@ async function submitPost(){
 }
 
 function delPost(id){
-  if(!confirm('이 게시글을 삭제할까요? (첨부 사진도 드라이브 휴지통으로 이동)')) return;
+  if(!confirm('이 게시글을 삭제할까요? (첨부 사진도 함께 삭제됩니다)')) return;
   call('deletePost', {ID:id}, d => {
     DATA.posts = d.posts || d; renderBoard(); toast('삭제했습니다');
-    if(d.fileIds) imgCall('deleteFiles', {fileIds: d.fileIds}).catch(()=>{});
+    if(d.fileIds) imgDelete(d.fileIds).catch(()=>{});
   });
 }
 
@@ -2002,14 +2074,30 @@ function submitRules(){
 
 /* ---------- 조 편성 ---------- */
 const COURSES = ['동코스','서코스']; // 창원CC 코스
-let TEAMS = storeGet('usTeams') || [];
-let TEAM_META = storeGet('usTeamMeta') || {};
+let TEAMS = []; // 조편성 결과 (서버 저장)
+let TEAM_META = {};
 let PICKED = null;
+function loadTeamsFromServer(){
+  try{
+    const raw = DATA.settings && DATA.settings.teams;
+    const obj = raw ? JSON.parse(raw) : null;
+    TEAMS = (obj && obj.teams) || [];
+    TEAM_META = (obj && obj.meta) || {};
+  }catch(e){ TEAMS = []; TEAM_META = {}; }
+}
+function saveTeamsToServer(){
+  if(!isAdmin()) return;
+  callAsync('saveTeams', { json: JSON.stringify({ teams: TEAMS, meta: TEAM_META }) }).catch(()=>{});
+}
 
 function renderTeamSetup(){
+  const admin = isAdmin();
+  const setup = document.getElementById('tmSetupCard');
+  if(setup) setup.style.display = admin ? '' : 'none';
+  renderTeams();
+  if(TEAMS.length){ const cb = document.getElementById('tmCopyBtn'); if(cb) cb.style.display = ''; }
   const el = document.getElementById('tmMembers');
   if(!el) return;
-  if(TEAMS.length){ renderTeams(); document.getElementById('tmCopyBtn').style.display=''; }
   el.innerHTML = DATA.members.filter(m=>!m['상태']).map(m =>
     '<label><input type="checkbox" class="tm-ck" value="'+esc(m['이름'])+'" checked onchange="tmCount()"> '+esc(m['이름'])+'</label>'
   ).join('');
@@ -2033,6 +2121,7 @@ function tmCount(){
 }
 
 function makeTeams(){
+  if(!isAdmin()) return;
   const names = [...document.querySelectorAll('.tm-ck:checked')].map(c=>c.value);
   // 게스트 합류 (이름 입력된 것만, 표시는 (G) 표기)
   [...document.querySelectorAll('.tm-guest')].forEach(inp => {
@@ -2046,27 +2135,33 @@ function makeTeams(){
   TEAMS = Array.from({length:g}, ()=>[]);
   names.forEach((n,i)=> TEAMS[i%g].push(n));
   PICKED = null; TEAM_META = {};
-  storeSet('usTeams', TEAMS); storeSet('usTeamMeta', TEAM_META);
+  saveTeamsToServer();
   renderTeams(); renderScores();
   document.getElementById('tmCopyBtn').style.display = '';
 }
 
 function renderTeams(){
   const el = document.getElementById('teamBoard');
+  const admin = isAdmin();
+  if(!TEAMS.length){ el.innerHTML = admin ? '' : '<div class="card"><div class="empty">아직 조편성 결과가 없습니다.</div></div>'; return; }
   el.innerHTML = TEAMS.map((team,gi)=>{
     const meta = TEAM_META[gi] || {};
     const info = [];
     if(meta.tee) info.push('🕐 '+fmtTee(meta.tee));
     if(meta.course) info.push('⛳ '+esc(meta.course));
-    const infoLine = info.length
-      ? '<div class="tm-info" onclick="event.stopPropagation();openTeamMeta('+gi+')">'+info.join(' · ')+' <span style="color:var(--accent)">✎</span></div>'
-      : '<div class="tm-info tm-info-empty" onclick="event.stopPropagation();openTeamMeta('+gi+')">＋ 티오프·코스 지정</div>';
-    return '<div class="team-box" data-g="'+gi+'" ondragover="event.preventDefault();this.classList.add(\'drop-hover\')" '+
-      'ondragleave="this.classList.remove(\'drop-hover\')" ondrop="dropChip(event,'+gi+')" onclick="boxClick('+gi+')">'+
+    const infoLine = admin
+      ? (info.length
+          ? '<div class="tm-info" onclick="event.stopPropagation();openTeamMeta('+gi+')">'+info.join(' · ')+' <span style="color:var(--accent)">✎</span></div>'
+          : '<div class="tm-info tm-info-empty" onclick="event.stopPropagation();openTeamMeta('+gi+')">＋ 티오프·코스 지정</div>')
+      : (info.length ? '<div class="tm-info">'+info.join(' · ')+'</div>' : '');
+    const boxAttrs = admin
+      ? ' ondragover="event.preventDefault();this.classList.add(\'drop-hover\')" ondragleave="this.classList.remove(\'drop-hover\')" ondrop="dropChip(event,'+gi+')" onclick="boxClick('+gi+')"'
+      : '';
+    return '<div class="team-box" data-g="'+gi+'"'+boxAttrs+'>'+
       '<h5>'+(gi+1)+'조 <small>('+team.length+'명)</small></h5>'+ infoLine +
       team.map((n,i)=>
-        '<span class="tm-chip'+(PICKED&&PICKED.g===gi&&PICKED.i===i?' picked':'')+'" draggable="true" '+
-        'ondragstart="dragChip(event,'+gi+','+i+')" ondblclick="pickChip(event,'+gi+','+i+')">'+esc(n)+'</span>'
+        '<span class="tm-chip'+(admin&&PICKED&&PICKED.g===gi&&PICKED.i===i?' picked':'')+'"'+
+        (admin ? ' draggable="true" ondragstart="dragChip(event,'+gi+','+i+')" ondblclick="pickChip(event,'+gi+','+i+')"' : '')+'>'+esc(n)+'</span>'
       ).join('')+
       '</div>';
   }).join('');
@@ -2088,12 +2183,13 @@ function openTeamMeta(gi){
   openModal('mTeamMeta');
 }
 function saveTeamMeta(){
+  if(!isAdmin()) return;
   let h = Number(document.getElementById('tmMetaH').value);
   const mm = document.getElementById('tmMetaM').value;
   const ap = document.getElementById('tmMetaAP').value;
   if(ap==='PM' && h<12) h+=12; if(ap==='AM' && h===12) h=0;
   TEAM_META[TEAM_META_G] = { tee: String(h).padStart(2,'0')+':'+mm, course: document.getElementById('tmMetaCourse').value };
-  storeSet('usTeamMeta', TEAM_META);
+  saveTeamsToServer();
   closeModal('mTeamMeta'); renderTeams(); toast('저장했습니다');
 }
 
@@ -2105,7 +2201,7 @@ function dropChip(ev, toG){
   if(g===toG) { renderTeams(); return; }
   const name = TEAMS[g].splice(i,1)[0];
   TEAMS[toG].push(name);
-  PICKED = null; storeSet('usTeams', TEAMS); renderTeams(); renderScores();
+  PICKED = null; saveTeamsToServer(); renderTeams(); renderScores();
 }
 function pickChip(ev, g, i){
   ev.stopPropagation();
@@ -2117,7 +2213,7 @@ function boxClick(toG){
   if(PICKED.g===toG){ PICKED=null; renderTeams(); return; }
   const name = TEAMS[PICKED.g].splice(PICKED.i,1)[0];
   TEAMS[toG].push(name);
-  PICKED = null; storeSet('usTeams', TEAMS); renderTeams(); renderScores();
+  PICKED = null; saveTeamsToServer(); renderTeams(); renderScores();
 }
 
 function copyTeams(){
