@@ -2365,6 +2365,8 @@ function nextEventDate(){
 }
 let TEAMS = []; // 조편성 결과 (서버 저장)
 let TEAM_META = {};
+let TEAM_HIST = {};   // 모임ID → {teams, meta} (과거 조편성 보관)
+let TM_CUR_EVENT = ''; // 현재 편성 중인 모임ID
 let PICKED = null;
 function loadTeamsFromServer(){
   try{
@@ -2372,11 +2374,28 @@ function loadTeamsFromServer(){
     const obj = raw ? JSON.parse(raw) : null;
     TEAMS = (obj && obj.teams) || [];
     TEAM_META = (obj && obj.meta) || {};
-  }catch(e){ TEAMS = []; TEAM_META = {}; }
+    TEAM_HIST = (obj && obj.hist) || {};
+  }catch(e){ TEAMS = []; TEAM_META = {}; TEAM_HIST = {}; }
 }
 function saveTeamsToServer(){
   if(!isAdmin()) return;
-  callAsync('saveTeams', { json: JSON.stringify({ teams: TEAMS, meta: TEAM_META }) }).catch(()=>{});
+  if(TM_CUR_EVENT) TEAM_HIST[TM_CUR_EVENT] = { teams: TEAMS, meta: TEAM_META };
+  callAsync('saveTeams', { json: JSON.stringify({ teams: TEAMS, meta: TEAM_META, hist: TEAM_HIST }) }).catch(()=>{});
+}
+// 모임 선택 시 그 모임의 저장된 조편성을 복원
+function tmLoadEventTeams(){
+  const v = tmMode();
+  TM_CUR_EVENT = (v && v !== 'ALL') ? v : '';
+  if(!TM_CUR_EVENT) return;
+  const h = TEAM_HIST[TM_CUR_EVENT];
+  if(!h || !(h.teams||[]).length) return;
+  TEAMS = h.teams.map(t=>[...t]);
+  TEAM_META = h.meta || {};
+  PICKED = null;
+  renderTeams(); renderScores();
+  const cb = document.getElementById('tmCopyBtn');
+  if(cb && TEAMS.length) cb.style.display = '';
+  toast('이 모임의 저장된 조편성을 불러왔습니다');
 }
 // 최신 조편성만 서버에서 다시 받아와 갱신 (총무·PM 외 회원용)
 function refreshTeams(){
@@ -2471,7 +2490,9 @@ function renderTmMemberList(){
     const memberNames = new Set(all.map(m=>tmKey(m['이름'])));
     const guests = players.filter(p => !memberNames.has(tmKey(p)));
     tmSetGuests(guests);
-    if(note) note.textContent = '참석 '+players.length+'명 (회원 '+list.length+'명'+(guests.length?' · 게스트 '+guests.length+'명':'')+')';
+    const saved = TEAM_HIST[String(ev.ID)] && (TEAM_HIST[String(ev.ID)].teams||[]).length;
+    if(note) note.textContent = '참석 '+players.length+'명 (회원 '+list.length+'명'+(guests.length?' · 게스트 '+guests.length+'명':'')+')'+
+      (saved ? ' · 저장된 조편성 표시 중' : ' · 저장된 조편성 없음 (랜덤 배치하세요)');
   }else{
     if(note) note.textContent = '전체 회원 표시 · 직접 체크해서 편성합니다.';
   }
@@ -2480,7 +2501,7 @@ function renderTmMemberList(){
   ).join('');
   tmCount();
 }
-function tmApplyEvent(){ renderTmMemberList(); }
+function tmApplyEvent(){ tmLoadEventTeams(); renderTmMemberList(); }
 function renderGuestInputs(){
   const n = Math.max(0, Math.min(20, Number(document.getElementById('tmGuestN').value)||0));
   const box = document.getElementById('tmGuests');
@@ -2513,6 +2534,7 @@ function makeTeams(){
   TEAMS = Array.from({length:g}, ()=>[]);
   names.forEach((n,i)=> TEAMS[i%g].push(n));
   PICKED = null; TEAM_META = {};
+  TM_CUR_EVENT = (tmMode() && tmMode() !== 'ALL') ? tmMode() : '';
   saveTeamsToServer();
   renderTeams(); renderScores();
   document.getElementById('tmCopyBtn').style.display = '';
