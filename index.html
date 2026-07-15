@@ -2422,14 +2422,18 @@ function renderTmEventSelect(){
   if(!sel) return;
   const prev = sel.value;
   const evs = [...(DATA.events||[])].sort((a,b)=>a['날짜']<b['날짜']?1:-1);
-  sel.innerHTML = '<option value="">— 전체 회원 —</option>' +
+  sel.innerHTML = '<option value="">— 모임을 선택하세요 —</option><option value="ALL">— 전체 회원 —</option>' +
     evs.map(e=>'<option value="'+e.ID+'">'+esc(e['날짜'])+' · '+esc(e['골프장']||'')+(e['종류']?' · '+esc(e['종류']):'')+'</option>').join('');
   if(prev && evs.some(e=>String(e.ID)===String(prev))) sel.value = prev;
 }
-function tmSelectedEvent(){
+function tmMode(){
   const sel = document.getElementById('tmEvent');
-  if(!sel || !sel.value) return null;
-  return (DATA.events||[]).find(x=>String(x.ID)===String(sel.value)) || null;
+  return sel ? sel.value : '';
+}
+function tmSelectedEvent(){
+  const v = tmMode();
+  if(!v || v === 'ALL') return null;
+  return (DATA.events||[]).find(x=>String(x.ID)===String(v)) || null;
 }
 function tmPlayersOf(ev){ return String(ev && ev['참가자'] || '').split(',').map(x=>x.trim()).filter(Boolean); }
 // 게스트 입력란 채우기
@@ -2446,6 +2450,12 @@ function renderTmMemberList(){
   const el = document.getElementById('tmMembers');
   const note = document.getElementById('tmEventNote');
   if(!el) return;
+  const mode = tmMode();
+  if(!mode){ // 기본: 모임 미선택 → 목록 표시 안 함
+    if(note) note.textContent = '';
+    el.innerHTML = '<div class="empty" style="padding:14px">모임을 선택하면 참석 인원이 표시됩니다.</div>';
+    tmCount(); return;
+  }
   const ev = tmSelectedEvent();
   const all = DATA.members.filter(m=>!m['상태']);
   let list = all;
@@ -2463,7 +2473,7 @@ function renderTmMemberList(){
     tmSetGuests(guests);
     if(note) note.textContent = '참석 '+players.length+'명 (회원 '+list.length+'명'+(guests.length?' · 게스트 '+guests.length+'명':'')+')';
   }else{
-    if(note) note.textContent = '모임을 선택하면 그 모임 참석자만 표시됩니다.';
+    if(note) note.textContent = '전체 회원 표시 · 직접 체크해서 편성합니다.';
   }
   el.innerHTML = list.map(m =>
     '<label><input type="checkbox" class="tm-ck" value="'+esc(m['이름'])+'" checked onchange="tmCount()"> '+esc(m['이름'])+'</label>'
