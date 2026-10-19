@@ -1405,7 +1405,10 @@ function renderEvents(){
   if(!DATA.events.length){ el.innerHTML = '<div class="card"><div class="empty">등록된 라운딩이 없습니다.</div></div>'; return; }
   const sorted = [...DATA.events].sort((a,b)=>a['날짜']<b['날짜']?1:-1);
   const myName = AUTH ? AUTH['이름'] : null;
+  const _d = new Date();
+  const todayLocal = _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');
   el.innerHTML = sorted.map(e => {
+    const ended = String(e['날짜']||'').slice(0,10) < todayLocal; // 라운딩 날짜가 지난 일정
     const players = String(e['참가자']||'').split(',').map(x=>x.trim()).filter(Boolean);
     const joined = myName && players.indexOf(myName) >= 0;
     const absents = Array.isArray(e['불참']) ? e['불참'] : [];
@@ -1422,7 +1425,8 @@ function renderEvents(){
       (players.length ? ' · '+players.map(esc).join(', ') : ' · 아직 없음')+'</div>'+
       (absents.length ? '<div style="margin:2px 0 4px;font-size:13.5px"><b style="color:#FF8E8E">불참자 '+absents.length+'명</b> · '+absents.map(a=>esc(a.name)+(a.reason?' <span style="color:var(--ink-soft)">('+esc(a.reason)+')</span>':'')).join(', ')+'</div>' : '')+
       '<div class="post-actions">'+
-      (AUTH ? (absent ? '' : '<button class="btn btn-sm '+(joined?'btn-danger':'btn-primary')+'" onclick="applyEvent('+e.ID+')">'+(joined?'신청 취소':'참가 신청')+'</button> ')+
+      (ended ? '<span class="badge" style="background:#2A2F3A;color:#A8B0C0;padding:6px 12px;font-size:12.5px">⛳ 라운딩 종료</span>' :
+       AUTH ? (absent ? '' : '<button class="btn btn-sm '+(joined?'btn-danger':'btn-primary')+'" onclick="applyEvent('+e.ID+')">'+(joined?'신청 취소':'참가 신청')+'</button> ')+
               '<button class="btn btn-sm '+(absent?'btn-danger':'btn-ghost')+'"'+(absent?'':' style="margin-left:4px"')+' onclick="absentEvent('+e.ID+','+absent+')">'+(absent?'불참 취소':'불참')+'</button>'
             : '<button class="btn btn-sm btn-ghost" onclick="openLogin()">로그인 후 참가 신청</button>')+
       (isAdmin() ? ' <button class="btn btn-sm btn-ghost" onclick="openEvent('+e.ID+')">수정</button>'+
