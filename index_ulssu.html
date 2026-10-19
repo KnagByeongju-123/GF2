@@ -1422,8 +1422,8 @@ function renderEvents(){
       (players.length ? ' · '+players.map(esc).join(', ') : ' · 아직 없음')+'</div>'+
       (absents.length ? '<div style="margin:2px 0 4px;font-size:13.5px"><b style="color:#FF8E8E">불참자 '+absents.length+'명</b> · '+absents.map(a=>esc(a.name)+(a.reason?' <span style="color:var(--ink-soft)">('+esc(a.reason)+')</span>':'')).join(', ')+'</div>' : '')+
       '<div class="post-actions">'+
-      (AUTH ? '<button class="btn btn-sm '+(joined?'btn-danger':'btn-primary')+'" onclick="applyEvent('+e.ID+')">'+(joined?'신청 취소':'참가 신청')+'</button>'+
-              ' <button class="btn btn-sm '+(absent?'btn-danger':'btn-ghost')+'" style="margin-left:4px" onclick="absentEvent('+e.ID+','+absent+')">'+(absent?'불참 취소':'불참')+'</button>'
+      (AUTH ? (absent ? '' : '<button class="btn btn-sm '+(joined?'btn-danger':'btn-primary')+'" onclick="applyEvent('+e.ID+')">'+(joined?'신청 취소':'참가 신청')+'</button> ')+
+              '<button class="btn btn-sm '+(absent?'btn-danger':'btn-ghost')+'"'+(absent?'':' style="margin-left:4px"')+' onclick="absentEvent('+e.ID+','+absent+')">'+(absent?'불참 취소':'불참')+'</button>'
             : '<button class="btn btn-sm btn-ghost" onclick="openLogin()">로그인 후 참가 신청</button>')+
       (isAdmin() ? ' <button class="btn btn-sm btn-ghost" onclick="openEvent('+e.ID+')">수정</button>'+
       '<button class="btn btn-sm btn-danger" style="margin-left:4px" onclick="delEvent('+e.ID+')">삭제</button>' : '')+
